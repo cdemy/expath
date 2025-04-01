@@ -1,3 +1,4 @@
+import 'package:dj_projektarbeit/gui/rule_editor_screen.dart';
 import 'package:dj_projektarbeit/logic/pathfinder.dart';
 import 'package:dj_projektarbeit/models/root_directory_entry.dart';
 import 'package:flutter/material.dart';
@@ -98,7 +99,14 @@ class _MainScreenState extends State<MainScreen> {
                   /// ------------------- Regel-Liste -------------------
                   Row(
                     children: [
-                      ElevatedButton(onPressed: () {}, child: Text("Hinzufügen")),
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => RuleEditorScreen()),
+                            );
+                          },
+                          child: Text("Hinzufügen")),
                       SizedBox(width: 8),
                       ElevatedButton(onPressed: () {}, child: Text("Entfernen")),
                       SizedBox(width: 8),
