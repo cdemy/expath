@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../logic/rule_system.dart'; // <- importiere dein Regel-System
 
 class RuleEditorScreen extends StatefulWidget {
   const RuleEditorScreen({super.key});
@@ -8,16 +9,31 @@ class RuleEditorScreen extends StatefulWidget {
 }
 
 class _RuleEditorScreenState extends State<RuleEditorScreen> {
-  // Dummy-Values
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _excelFieldController = TextEditingController();
-  String? selectedRuleType;
+  RuleType? selectedRuleType;
+  final Map<String, TextEditingController> _inputControllers = {};
 
-  final List<String> ruleTypes = [
-    'Regeltyp 1',
-    'Regeltyp 2',
-    'Regeltyp 3',
-  ];
+  void _saveRule() {
+    if (selectedRuleType == null) return;
+
+    // Werte sammeln
+    List<Eingabewert> eingabeWerte = [];
+    for (var eingabe in selectedRuleType!.eingaben) {
+      final controller = _inputControllers[eingabe.label];
+      if (controller == null || controller.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Bitte alle Felder ausfüllen')),
+        );
+        return;
+      }
+      eingabeWerte.add(Eingabewert(controller.text));
+    }
+
+    // Regel erzeugen
+    Rule rule = RuleFactory.fromEingaben(selectedRuleType!, eingabeWerte);
+
+    // Zurück zum MainScreen mit Regel
+    Navigator.pop(context, rule);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,50 +50,55 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Textfelder und Dropdown
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'REGELNAME',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 12),
-            TextField(
-              controller: _excelFieldController,
-              decoration: InputDecoration(
-                labelText: 'EXCEL FELD',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              decoration: InputDecoration(
-                labelText: 'REGELART',
-                border: OutlineInputBorder(),
-              ),
+            DropdownButtonFormField<RuleType>(
+              decoration: InputDecoration(labelText: 'Regeltyp auswählen'),
               value: selectedRuleType,
-              items: ruleTypes
-                  .map((type) => DropdownMenuItem(
-                        value: type,
-                        child: Text(type),
-                      ))
-                  .toList(),
+              items: RuleType.values.map((ruleType) {
+                return DropdownMenuItem(
+                  value: ruleType,
+                  child: Text(ruleType.label),
+                );
+              }).toList(),
               onChanged: (value) {
                 setState(() {
                   selectedRuleType = value;
+                  _inputControllers.clear();
+                  if (value != null) {
+                    for (var eingabe in value.eingaben) {
+                      _inputControllers[eingabe.label] = TextEditingController();
+                    }
+                  }
                 });
               },
             ),
-            SizedBox(height: 32),
-            // Work in Progress Platzhalter
-            Expanded(
-              child: Center(
-                child: Text(
-                  'WORK IN PROGRESS',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey),
+            SizedBox(height: 16),
+            if (selectedRuleType != null)
+              ...selectedRuleType!.eingaben.map((eingabe) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: TextField(
+                    controller: _inputControllers[eingabe.label],
+                    decoration: InputDecoration(
+                      labelText: eingabe.label,
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: eingabe.valueType == 'int' ? TextInputType.number : TextInputType.text,
+                  ),
+                );
+              }).toList(),
+            SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: _saveRule,
+                  child: Text("Speichern"),
                 ),
-              ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("Abbrechen"),
+                ),
+              ],
             ),
           ],
         ),

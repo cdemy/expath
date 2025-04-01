@@ -1,8 +1,8 @@
 import 'package:dj_projektarbeit/gui/rule_editor_screen.dart';
 import 'package:dj_projektarbeit/logic/pathfinder.dart';
+import 'package:dj_projektarbeit/logic/rule_system.dart';
 import 'package:dj_projektarbeit/models/root_directory_entry.dart';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 
 class MainScreen extends StatefulWidget {
@@ -14,6 +14,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   List<RootDirectoryEntry> directories = [];
+  List<Rule> rules = [];
 
   Future<void> selectDirectory() async {
     final String? selectedDirectory = await getDirectoryPath();
@@ -100,13 +101,19 @@ class _MainScreenState extends State<MainScreen> {
                   Row(
                     children: [
                       ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => RuleEditorScreen()),
-                            );
-                          },
-                          child: Text("Hinzufügen")),
+                        onPressed: () async {
+                          final rule = await Navigator.push<Rule>(
+                            context,
+                            MaterialPageRoute(builder: (context) => RuleEditorScreen()),
+                          );
+                          if (rule != null) {
+                            setState(() {
+                              rules.add(rule);
+                            });
+                          }
+                        },
+                        child: Text("Hinzufügen"),
+                      ),
                       SizedBox(width: 8),
                       ElevatedButton(onPressed: () {}, child: Text("Entfernen")),
                       SizedBox(width: 8),
@@ -122,12 +129,25 @@ class _MainScreenState extends State<MainScreen> {
                       decoration: BoxDecoration(
                         border: Border.all(),
                       ),
-                      child: ListView.builder(
-                        itemCount: 10,
-                        itemBuilder: (context, index) => ListTile(
-                          title: Text("Regel ${index + 1}"),
-                        ),
-                      ),
+                      child: rules.isEmpty
+                          ? Center(child: Text("Noch keine Regeln hinzugefügt."))
+                          : ListView.builder(
+                              itemCount: rules.length,
+                              itemBuilder: (context, index) {
+                                final rule = rules[index];
+                                return ListTile(
+                                  title: Text(rule.description()),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.delete),
+                                    onPressed: () {
+                                      setState(() {
+                                        rules.removeAt(index);
+                                      });
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
                     ),
                   ),
                 ],
