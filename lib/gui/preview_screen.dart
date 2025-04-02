@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import '../logic/rule_system.dart';
 import '../models/root_directory_entry.dart';
+import 'package:file_picker/file_picker.dart';
+import '../logic/excel_exporter.dart';
 
 class PreviewScreen extends StatefulWidget {
   final List<RootDirectoryEntry> directories;
@@ -90,10 +95,17 @@ class _PreviewScreenState extends State<PreviewScreen> {
                   ),
                   SizedBox(height: 8),
                   ElevatedButton.icon(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Export noch nicht implementiert.")),
-                      );
+                    onPressed: () async {
+                      try {
+                        await ExcelExporter.export(
+                          directories: widget.directories,
+                          rules: widget.rules,
+                        );
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text('Excel-Datei erfolgreich exportiert!')));
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Fehler: $e')));
+                      }
                     },
                     icon: Icon(Icons.file_download),
                     label: Text("Excel-Datei generieren"),
