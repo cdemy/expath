@@ -1,24 +1,47 @@
+// rule_system.dart
+
+/// -----------------------------
+/// RuleType - vordefinierte Regeltypen
+/// -----------------------------
+
 enum RuleType {
-  regEx(
-    label: 'Regex-Ausdruck',
-    eingaben: [Eingabe(label: 'Regex', valueType: 'String')],
+  fileName(
+    label: 'Dateiname extrahieren',
+    eingaben: [], // keine Benutzer-Eingaben nötig
+    defaultRegex: r'[^\\/]+$', // alles nach dem letzten / oder \
+    defaultExcelField: 'Dateiname',
   ),
-  subString(
-    label: 'String-Abschnitt',
+  parentDirectory(
+    label: 'Ordnerpfad extrahieren',
+    eingaben: [], // keine Benutzer-Eingaben nötig
+    defaultRegex: r'^.*(?=\\[^\\]+$)', // alles bis zum letzten /
+    defaultExcelField: 'Ordnerpfad',
+  ),
+  regEx(
+    label: 'Benutzerdefinierter Regex',
     eingaben: [
-      Eingabe(label: 'Start-Index', valueType: 'int'),
-      Eingabe(label: 'End-Index', valueType: 'int'),
+      Eingabe(label: 'Regex', valueType: 'String'),
+      Eingabe(label: 'Excel-Feldname', valueType: 'String'),
+      Eingabe(label: 'Regelname', valueType: 'String'),
     ],
   );
 
   const RuleType({
     required this.label,
-    required this.eingaben,
+    this.eingaben = const [],
+    this.defaultRegex,
+    this.defaultExcelField,
   });
 
   final String label;
   final List<Eingabe> eingaben;
+  final String? defaultRegex;
+  final String? defaultExcelField;
 }
+
+/// -----------------------------
+/// Eingabe-Definition (Meta)
+/// -----------------------------
 
 class Eingabe {
   final String label;
@@ -30,59 +53,84 @@ class Eingabe {
   });
 }
 
+/// -----------------------------
+/// Eingabewert (User-Eingabe)
+/// -----------------------------
+
 class Eingabewert {
   final String value;
 
   Eingabewert(this.value);
 }
 
-// -----------------------------
-// Regel-System
-// -----------------------------
+/// -----------------------------
+/// Abstrakte Regel
+/// -----------------------------
 
 abstract class Rule {
   RuleType get type;
-  String description();
+  String get name; // Anzeigename der Regel
+  String get excelField; // Excel-Spaltenname
+  String get regex; // Regex der Regel
+  String description(); // kurze Beschreibung
+  String? apply(String input); // Wendet Regel auf einen Dateipfad an
 }
 
-class RegExRule implements Rule {
-  final String regexPattern;
+/// -----------------------------
+/// Konkrete Regel (Regex basierend)
+/// -----------------------------
 
-  RegExRule(this.regexPattern);
+class SimpleRegexRule implements Rule {
+  final RuleType type;
+  final String name;
+  final String excelField;
+  final String regex;
+
+  SimpleRegexRule({
+    required this.type,
+    required this.name,
+    required this.excelField,
+    required this.regex,
+  });
 
   @override
-  RuleType get type => RuleType.regEx;
+  String description() => '$name → $excelField = $regex';
 
   @override
-  String description() => 'RegEx: $regexPattern';
+  String? apply(String input) {
+    final regExp = RegExp(regex);
+    final match = regExp.firstMatch(input);
+    return match?.group(0);
+  }
 }
 
-class SubStringRule implements Rule {
-  final int startIndex;
-  final int endIndex;
-
-  SubStringRule(this.startIndex, this.endIndex);
-
-  @override
-  RuleType get type => RuleType.subString;
-
-  @override
-  String description() => 'Substring zwischen /$startIndex und /$endIndex';
-}
-
-// -----------------------------
-// Factory-Helper
-// -----------------------------
+/// -----------------------------
+/// Regel Factory
+/// -----------------------------
 
 class RuleFactory {
   static Rule fromEingaben(RuleType type, List<Eingabewert> eingaben) {
     switch (type) {
+      case RuleType.fileName:
+        return SimpleRegexRule(
+          type: type,
+          name: type.label,
+          excelField: type.defaultExcelField!,
+          regex: type.defaultRegex!,
+        );
+      case RuleType.parentDirectory:
+        return SimpleRegexRule(
+          type: type,
+          name: type.label,
+          excelField: type.defaultExcelField!,
+          regex: type.defaultRegex!,
+        );
       case RuleType.regEx:
-        return RegExRule(eingaben[0].value);
-      case RuleType.subString:
-        return SubStringRule(
-          int.parse(eingaben[0].value),
-          int.parse(eingaben[1].value),
+        return SimpleRegexRule(
+          type: type,
+          name: eingaben[2].value,
+          excelField: eingaben[1].value,
+          regex: eingaben[0].value,
         );
     }
   }

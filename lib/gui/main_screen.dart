@@ -1,3 +1,4 @@
+import 'package:dj_projektarbeit/gui/preview_screen.dart';
 import 'package:dj_projektarbeit/gui/rule_editor_screen.dart';
 import 'package:dj_projektarbeit/logic/pathfinder.dart';
 import 'package:dj_projektarbeit/logic/rule_system.dart';
@@ -40,6 +41,27 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  void _previewRules() {
+    if (directories.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Bitte zuerst ein Verzeichnis auswählen.')));
+      return;
+    }
+    if (rules.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Bitte zuerst eine Regel hinzufügen.')));
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${directories[0].path}')),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${rules[0].excelField}')),
+    );
+    final abc = rules[0].apply(directories[0].filePaths[0]);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('$abc')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +79,26 @@ class _MainScreenState extends State<MainScreen> {
                 SizedBox(width: 8),
                 ElevatedButton(onPressed: selectDirectory, child: Text("Ordner hinzufügen")),
                 SizedBox(width: 8),
-                ElevatedButton(onPressed: () {}, child: Text("Vorschau")),
+                ElevatedButton(
+                  onPressed: () {
+                    if (directories.isEmpty || rules.isEmpty) {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text('Bitte Verzeichnisse und Regeln anlegen.')));
+                      return;
+                    }
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PreviewScreen(
+                          directories: directories,
+                          rules: rules,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text("Vorschau"),
+                ),
                 SizedBox(width: 8),
                 ElevatedButton(onPressed: () {}, child: Text("Excel-Datei generieren")),
               ],

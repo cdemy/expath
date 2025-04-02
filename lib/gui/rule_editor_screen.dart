@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../logic/rule_system.dart'; // <- importiere dein Regel-System
+import '../logic/rule_system.dart';
 
 class RuleEditorScreen extends StatefulWidget {
   const RuleEditorScreen({super.key});
@@ -15,23 +15,29 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
   void _saveRule() {
     if (selectedRuleType == null) return;
 
-    // Werte sammeln
     List<Eingabewert> eingabeWerte = [];
-    for (var eingabe in selectedRuleType!.eingaben) {
-      final controller = _inputControllers[eingabe.label];
-      if (controller == null || controller.text.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Bitte alle Felder ausfüllen')),
-        );
-        return;
+
+    // Dynamisch prüfen ob überhaupt Eingaben nötig sind
+    if (selectedRuleType!.eingaben.isNotEmpty) {
+      for (var eingabe in selectedRuleType!.eingaben) {
+        final controller = _inputControllers[eingabe.label];
+        if (controller == null || controller.text.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Bitte alle Felder ausfüllen')),
+          );
+          return;
+        }
+        eingabeWerte.add(Eingabewert(controller.text));
       }
-      eingabeWerte.add(Eingabewert(controller.text));
     }
 
     // Regel erzeugen
-    Rule rule = RuleFactory.fromEingaben(selectedRuleType!, eingabeWerte);
+    final rule = RuleFactory.fromEingaben(selectedRuleType!, eingabeWerte);
 
-    // Zurück zum MainScreen mit Regel
+    // Debug um zu sehen ob Regel ankommt
+    print("Regel erzeugt: ${rule.description()}");
+
+    // Regel an MainScreen zurückgeben
     Navigator.pop(context, rule);
   }
 
@@ -50,6 +56,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Dropdown zur Regelwahl
             DropdownButtonFormField<RuleType>(
               decoration: InputDecoration(labelText: 'Regeltyp auswählen'),
               value: selectedRuleType,
@@ -63,7 +70,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
                 setState(() {
                   selectedRuleType = value;
                   _inputControllers.clear();
-                  if (value != null) {
+                  if (value != null && value.eingaben.isNotEmpty) {
                     for (var eingabe in value.eingaben) {
                       _inputControllers[eingabe.label] = TextEditingController();
                     }
@@ -72,7 +79,9 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
               },
             ),
             SizedBox(height: 16),
-            if (selectedRuleType != null)
+
+            // Dynamische Felder (nur bei regEx)
+            if (selectedRuleType?.eingaben.isNotEmpty ?? false)
               ...selectedRuleType!.eingaben.map((eingabe) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -86,7 +95,10 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
                   ),
                 );
               }).toList(),
+
             SizedBox(height: 24),
+
+            // Buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
