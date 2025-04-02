@@ -94,7 +94,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
                     keyboardType: eingabe.valueType == 'int' ? TextInputType.number : TextInputType.text,
                   ),
                 );
-              }).toList(),
+              }),
 
             SizedBox(height: 24),
 

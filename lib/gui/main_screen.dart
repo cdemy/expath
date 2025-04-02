@@ -21,6 +21,7 @@ class _MainScreenState extends State<MainScreen> {
     final String? selectedDirectory = await getDirectoryPath();
     if (selectedDirectory != null) {
       if (directories.any((dir) => dir.path == selectedDirectory)) {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Dieses Verzeichnis wurde bereits hinzugefügt.')));
         return;
@@ -39,27 +40,6 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       directories.removeAt(index);
     });
-  }
-
-  void _previewRules() {
-    if (directories.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Bitte zuerst ein Verzeichnis auswählen.')));
-      return;
-    }
-    if (rules.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Bitte zuerst eine Regel hinzufügen.')));
-      return;
-    }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${directories[0].path}')),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${rules[0].excelField}')),
-    );
-    final abc = rules[0].apply(directories[0].filePaths[0]);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$abc')),
-    );
   }
 
   @override

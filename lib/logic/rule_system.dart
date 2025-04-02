@@ -7,14 +7,14 @@
 enum RuleType {
   fileName(
     label: 'Dateiname extrahieren',
-    eingaben: [], // keine Benutzer-Eingaben nötig
-    defaultRegex: r'[^\\/]+$', // alles nach dem letzten / oder \
+    eingaben: [],
+    defaultRegex: r'[^\\/]+$',
     defaultExcelField: 'Dateiname',
   ),
   parentDirectory(
     label: 'Ordnerpfad extrahieren',
-    eingaben: [], // keine Benutzer-Eingaben nötig
-    defaultRegex: r'^.*(?=\\[^\\]+$)', // alles bis zum letzten /
+    eingaben: [],
+    defaultRegex: r'^.*(?=\\[^\\]+$)',
     defaultExcelField: 'Ordnerpfad',
   ),
   regEx(
@@ -98,7 +98,7 @@ class SimpleRegexRule implements Rule {
 
   @override
   String? apply(String input) {
-    final regExp = RegExp(regex);
+    final regExp = RegExp(regex, caseSensitive: false, multiLine: true);
     final match = regExp.firstMatch(input);
     return match?.group(0);
   }
