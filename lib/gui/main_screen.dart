@@ -1,5 +1,6 @@
 import 'package:dj_projektarbeit/gui/preview_screen.dart';
 import 'package:dj_projektarbeit/gui/rule_editor_screen.dart';
+import 'package:dj_projektarbeit/logic/excel_exporter.dart';
 import 'package:dj_projektarbeit/logic/pathfinder.dart';
 import 'package:dj_projektarbeit/logic/rule_system.dart';
 import 'package:dj_projektarbeit/models/root_directory_entry.dart';
@@ -55,7 +56,33 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             Row(
               children: [
-                ElevatedButton(onPressed: () {}, child: Text("Neu")),
+                ElevatedButton(
+                    onPressed: () async {
+                      final confirmed = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Alles zurücksetzen'),
+                          content: Text('Möchten Sie alles zurücksetzen?'),
+                          actions: [
+                            TextButton(onPressed: () => Navigator.pop(context, false), child: Text('Abbrechen')),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: Text('Zurücksetzen'),
+                            )
+                          ],
+                        ),
+                      );
+                      if (confirmed == true) {
+                        setState(() {
+                          directories.clear();
+                          rules.clear();
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Alles zurückgesetzt.')),
+                        );
+                      }
+                    },
+                    child: Text("Neu")),
                 SizedBox(width: 8),
                 ElevatedButton(onPressed: selectDirectory, child: Text("Ordner hinzufügen")),
                 SizedBox(width: 8),
@@ -80,7 +107,24 @@ class _MainScreenState extends State<MainScreen> {
                   child: Text("Vorschau"),
                 ),
                 SizedBox(width: 8),
-                ElevatedButton(onPressed: () {}, child: Text("Excel-Datei generieren")),
+                ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        await ExcelExporter.export(
+                          directories: directories,
+                          rules: rules,
+                        );
+                        // ignore: use_build_context_synchronously
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text('Excel-Datei erfolgreich exportiert')));
+                      } catch (e) {
+                        // ignore: use_build_context_synchronously
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Fehler: $e')),
+                        );
+                      }
+                    },
+                    child: Text("Excel-Datei generieren")),
               ],
             ),
             SizedBox(height: 8),
