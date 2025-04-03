@@ -13,13 +13,13 @@ class ExcelExporter {
       throw Exception("Keine Daten oder Regeln vorhanden.");
     }
 
-    // Save-Dialog
+    // Save dialog
     final String? savePath = await FilePicker.platform.saveFile(
       dialogTitle: 'Excel-Datei speichern',
       fileName: 'Export.xlsx',
     );
 
-    if (savePath == null) return; // Abbruch durch User
+    if (savePath == null) return;
 
     final excel = Excel.createExcel();
     final Sheet sheet = excel['Sheet1'];
@@ -30,7 +30,7 @@ class ExcelExporter {
       sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0)).value = headers[col];
     }
 
-    // Daten eintragen
+    // Input values
     final allFiles = directories.expand((dir) => dir.filePaths).toList();
     for (int i = 0; i < allFiles.length; i++) {
       final filePath = allFiles[i];
@@ -43,7 +43,7 @@ class ExcelExporter {
       }
     }
 
-    // Encode und speichern
+    // Encode and save the Excel file
     final bytes = excel.encode();
     if (bytes != null) {
       final file = File(savePath);

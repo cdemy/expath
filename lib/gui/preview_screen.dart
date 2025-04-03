@@ -97,9 +97,11 @@ class _PreviewScreenState extends State<PreviewScreen> {
                           directories: widget.directories,
                           rules: widget.rules,
                         );
+                        // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context)
                             .showSnackBar(SnackBar(content: Text('Excel-Datei erfolgreich exportiert!')));
                       } catch (e) {
+                        // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Fehler: $e')));
                       }
                     },

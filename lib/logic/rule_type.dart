@@ -1,5 +1,5 @@
 /// -----------------------------
-/// RuleType - vordefinierte Regeltypen
+/// RuleType - predefined rules
 /// -----------------------------
 
 enum RuleType {
@@ -19,7 +19,7 @@ enum RuleType {
     label: 'Benutzerdefinierter Regex',
     eingaben: [
       Eingabe(label: 'Regex', valueType: 'String'),
-      Eingabe(label: 'Excel-Feldname', valueType: 'String'),
+      Eingabe(label: 'Excel Spalte', valueType: 'String'),
       Eingabe(label: 'Regelname', valueType: 'String'),
     ],
   );
@@ -38,7 +38,7 @@ enum RuleType {
 }
 
 /// -----------------------------
-/// Eingabe-Definition (Meta)
+/// Eingabe - User input for rules
 /// -----------------------------
 
 class Eingabe {
@@ -52,7 +52,7 @@ class Eingabe {
 }
 
 /// -----------------------------
-/// Eingabewert (User-Eingabe)
+/// Eingabewert - User input value
 /// -----------------------------
 
 class Eingabewert {

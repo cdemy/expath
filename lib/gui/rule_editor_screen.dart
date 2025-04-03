@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../logic/rule.dart';
 
 class RuleEditorScreen extends StatefulWidget {
-  const RuleEditorScreen({super.key});
+  final Rule? existingRule;
+  const RuleEditorScreen({super.key, this.existingRule});
 
   @override
   State<RuleEditorScreen> createState() => _RuleEditorScreenState();
@@ -12,6 +13,25 @@ class RuleEditorScreen extends StatefulWidget {
 class _RuleEditorScreenState extends State<RuleEditorScreen> {
   RuleType? selectedRuleType;
   final Map<String, TextEditingController> _inputControllers = {};
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.existingRule != null) {
+      selectedRuleType = widget.existingRule!.type;
+      if (selectedRuleType != null) {
+        for (var eingabe in selectedRuleType!.eingaben) {
+          _inputControllers[eingabe.label] = TextEditingController();
+        }
+        if (widget.existingRule is SimpleRegexRule) {
+          final r = widget.existingRule as SimpleRegexRule;
+          _inputControllers['RegEx']?.text = r.regex;
+          _inputControllers['Excel Spalte']?.text = r.excelField;
+          _inputControllers['Regelname']?.text = r.name;
+        }
+      }
+    }
+  }
 
   void _saveRule() {
     if (selectedRuleType == null) return;
@@ -34,9 +54,6 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
 
     // Create Rule
     final rule = RuleFactory.fromEingaben(selectedRuleType!, eingabeWerte);
-
-    // Debug um zu sehen ob Regel ankommt
-    print("Regel erzeugt: ${rule.name}");
 
     // Return Rule to previous screen
     Navigator.pop(context, rule);

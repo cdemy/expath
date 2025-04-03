@@ -79,6 +79,7 @@ class _MainScreenState extends State<MainScreen> {
                           directories.clear();
                           rules.clear();
                         });
+                        // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Alles zurückgesetzt.')),
                         );
@@ -133,7 +134,7 @@ class _MainScreenState extends State<MainScreen> {
             Expanded(
               child: Column(
                 children: [
-                  /// ------------------- Verzeichnis-Liste -------------------
+                  /// ------------------- List of Directories -------------------
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
@@ -164,7 +165,7 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                   SizedBox(height: 8),
 
-                  /// ------------------- Regel-Liste -------------------
+                  /// ------------------- List of Rules -------------------
                   Row(
                     children: [
                       ElevatedButton(
@@ -201,16 +202,32 @@ class _MainScreenState extends State<MainScreen> {
                               itemBuilder: (context, index) {
                                 final rule = rules[index];
                                 return ListTile(
-                                  title: Text(rule.name),
-                                  trailing: IconButton(
-                                    icon: Icon(Icons.delete),
-                                    onPressed: () {
-                                      setState(() {
-                                        rules.removeAt(index);
-                                      });
-                                    },
-                                  ),
-                                );
+                                    title: Text(rule.name),
+                                    trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                                      IconButton(
+                                        icon: Icon(Icons.edit),
+                                        onPressed: () async {
+                                          final editedRule = await Navigator.push<Rule>(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => RuleEditorScreen(existingRule: rule),
+                                            ),
+                                          );
+                                          if (editedRule != null) {
+                                            setState(() {
+                                              rules[index] = editedRule;
+                                            });
+                                          }
+                                        },
+                                      ),
+                                      IconButton(
+                                          icon: Icon(Icons.delete),
+                                          onPressed: () {
+                                            setState(() {
+                                              rules.removeAt(index);
+                                            });
+                                          })
+                                    ]));
                               },
                             ),
                     ),
@@ -243,6 +260,7 @@ class _MainScreenState extends State<MainScreen> {
       setState(() {
         rules = loadedRules;
       });
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Regeln geladen')));
     }
   }

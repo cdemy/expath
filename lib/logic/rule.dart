@@ -1,7 +1,7 @@
 import 'package:dj_projektarbeit/logic/rule_type.dart';
 
 /// -----------------------------
-/// abstract Rule
+/// Abstract Rule
 /// -----------------------------
 
 abstract class Rule {
@@ -14,7 +14,7 @@ abstract class Rule {
 }
 
 /// -----------------------------
-/// concrete Rule
+/// Concrete Rule
 /// -----------------------------
 
 class SimpleRegexRule implements Rule {
