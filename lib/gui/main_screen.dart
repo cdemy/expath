@@ -1,9 +1,11 @@
 import 'package:dj_projektarbeit/gui/preview_screen.dart';
 import 'package:dj_projektarbeit/gui/rule_editor_screen.dart';
 import 'package:dj_projektarbeit/logic/excel_exporter.dart';
+import 'package:dj_projektarbeit/logic/functions/save_load.dart';
 import 'package:dj_projektarbeit/logic/pathfinder.dart';
-import 'package:dj_projektarbeit/logic/rule_system.dart';
-import 'package:dj_projektarbeit/models/root_directory_entry.dart';
+import 'package:dj_projektarbeit/logic/rule.dart';
+import 'package:dj_projektarbeit/logic/root_directory_entry.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:file_selector/file_selector.dart';
 
@@ -180,11 +182,9 @@ class _MainScreenState extends State<MainScreen> {
                         child: Text("Hinzufügen"),
                       ),
                       SizedBox(width: 8),
-                      ElevatedButton(onPressed: () {}, child: Text("Entfernen")),
+                      ElevatedButton(onPressed: _saveRules, child: Text("Speichern")),
                       SizedBox(width: 8),
-                      ElevatedButton(onPressed: () {}, child: Text("Speichern")),
-                      SizedBox(width: 8),
-                      ElevatedButton(onPressed: () {}, child: Text("Laden")),
+                      ElevatedButton(onPressed: _loadRules, child: Text("Laden")),
                     ],
                   ),
                   SizedBox(height: 8),
@@ -201,7 +201,7 @@ class _MainScreenState extends State<MainScreen> {
                               itemBuilder: (context, index) {
                                 final rule = rules[index];
                                 return ListTile(
-                                  title: Text(rule.description()),
+                                  title: Text(rule.name),
                                   trailing: IconButton(
                                     icon: Icon(Icons.delete),
                                     onPressed: () {
@@ -222,5 +222,28 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
     );
+  }
+
+  void _saveRules() async {
+    final path = await FilePicker.platform.saveFile(
+      dialogTitle: 'Regeln speichern',
+      fileName: 'rules.json',
+    );
+    if (path != null) {
+      await saveRulesToJson(rules, path);
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Regeln gespeichert')));
+    }
+  }
+
+  void _loadRules() async {
+    final result = await FilePicker.platform.pickFiles();
+    if (result != null && result.files.single.path != null) {
+      final loadedRules = await loadRulesFromJson(result.files.single.path!);
+      setState(() {
+        rules = loadedRules;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Regeln geladen')));
+    }
   }
 }

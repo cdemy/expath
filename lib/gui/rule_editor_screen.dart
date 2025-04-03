@@ -1,5 +1,6 @@
+import 'package:dj_projektarbeit/logic/rule_type.dart';
 import 'package:flutter/material.dart';
-import '../logic/rule_system.dart';
+import '../logic/rule.dart';
 
 class RuleEditorScreen extends StatefulWidget {
   const RuleEditorScreen({super.key});
@@ -17,7 +18,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
 
     List<Eingabewert> eingabeWerte = [];
 
-    // Dynamisch prüfen ob überhaupt Eingaben nötig sind
+    // Check if input is required and not empty
     if (selectedRuleType!.eingaben.isNotEmpty) {
       for (var eingabe in selectedRuleType!.eingaben) {
         final controller = _inputControllers[eingabe.label];
@@ -31,13 +32,13 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
       }
     }
 
-    // Regel erzeugen
+    // Create Rule
     final rule = RuleFactory.fromEingaben(selectedRuleType!, eingabeWerte);
 
     // Debug um zu sehen ob Regel ankommt
-    print("Regel erzeugt: ${rule.description()}");
+    print("Regel erzeugt: ${rule.name}");
 
-    // Regel an MainScreen zurückgeben
+    // Return Rule to previous screen
     Navigator.pop(context, rule);
   }
 
@@ -56,7 +57,6 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Dropdown zur Regelwahl
             DropdownButtonFormField<RuleType>(
               decoration: InputDecoration(labelText: 'Regeltyp auswählen'),
               value: selectedRuleType,
@@ -80,7 +80,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
             ),
             SizedBox(height: 16),
 
-            // Dynamische Felder (nur bei regEx)
+            // Dynamic input fields for regEx
             if (selectedRuleType?.eingaben.isNotEmpty ?? false)
               ...selectedRuleType!.eingaben.map((eingabe) {
                 return Padding(
@@ -98,7 +98,6 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
 
             SizedBox(height: 24),
 
-            // Buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
