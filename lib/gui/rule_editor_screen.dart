@@ -33,7 +33,6 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
         case PathSegmentRule r:
           _inputControllers['Position'] = TextEditingController(text: r.index.toString());
           _inputControllers['Excel Spalte'] = TextEditingController(text: r.excelField);
-          // "Regelname" absichtlich nicht gesetzt, weil automatisch generiert wird
           break;
       }
     }
@@ -42,7 +41,6 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
   List<Eingabe> getVisibleInputs() {
     if (selectedRuleType == null) return [];
 
-    // Regelname bei pathSegment ausblenden
     return selectedRuleType!.eingaben.where((e) {
       return selectedRuleType != RuleType.pathSegment || e.label != 'Regelname';
     }).toList();

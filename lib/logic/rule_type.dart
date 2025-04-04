@@ -15,6 +15,14 @@ enum RuleType {
     defaultRegex: r'^.*(?=\\[^\\]+$)',
     defaultExcelField: 'Ordnerpfad',
   ),
+  pathSegment(
+    label: 'Ordner an Position extrahieren',
+    eingaben: [
+      Eingabe(label: 'Position', valueType: 'int'),
+      Eingabe(label: 'Excel Spalte', valueType: 'String'),
+      Eingabe(label: 'Regelname', valueType: 'String'),
+    ],
+  ),
   regEx(
     label: 'Benutzerdefinierter Regex',
     eingaben: [
@@ -22,12 +30,7 @@ enum RuleType {
       Eingabe(label: 'Excel Spalte', valueType: 'String'),
       Eingabe(label: 'Regelname', valueType: 'String'),
     ],
-  ),
-  pathSegment(label: 'Ordner an Position extrahieren', eingaben: [
-    Eingabe(label: 'Position', valueType: 'int'),
-    Eingabe(label: 'Excel Spalte', valueType: 'String'),
-    Eingabe(label: 'Regelname', valueType: 'String'),
-  ]);
+  );
 
   const RuleType({
     required this.label,
