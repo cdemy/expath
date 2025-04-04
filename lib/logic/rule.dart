@@ -167,13 +167,15 @@ class RuleFactory {
       case RuleType.pathSegment:
         final index = int.parse(eingaben[0].value);
         return PathSegmentRule(
-          name: 'Ordner an Position $index extrahieren',
+          // name: 'Ordner an Position $index extrahieren',
+          name: eingaben[2].value,
           excelField: eingaben[1].value,
           index: index,
         );
       case RuleType.reversePathSegment:
         return ReversePathSegmentRule(
-          name: 'Ordner von hinten auswählen',
+          // name: 'Ordner von hinten auswählen',
+          name: eingaben[2].value,
           excelField: eingaben[1].value,
           reverseIndex: int.parse(eingaben[0].value),
         );
@@ -197,12 +199,14 @@ class RuleFactory {
     switch (type) {
       case RuleType.fileName:
       case RuleType.parentDirectory:
-      case RuleType.pathSegment:
-        return PathSegmentRule.fromJson(json);
-      case RuleType.reversePathSegment:
-        return ReversePathSegmentRule.fromJson(json);
       case RuleType.regEx:
         return SimpleRegexRule.fromJson(json);
+
+      case RuleType.pathSegment:
+        return PathSegmentRule.fromJson(json);
+
+      case RuleType.reversePathSegment:
+        return ReversePathSegmentRule.fromJson(json);
     }
   }
 }

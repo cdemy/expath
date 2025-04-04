@@ -16,7 +16,7 @@ enum RuleType {
     defaultExcelField: 'Ordnerpfad',
   ),
   pathSegment(
-    label: 'Ordner an Position extrahieren',
+    label: 'Ordner an Position extrahieren (0 = Partition, 1 = erster Ordner, 2 = zweiter Ordner, ...)',
     eingaben: [
       Eingabe(label: 'Position', valueType: 'int'),
       Eingabe(label: 'Excel Spalte', valueType: 'String'),
@@ -24,7 +24,7 @@ enum RuleType {
     ],
   ),
   reversePathSegment(
-    label: 'Ordner von hinten auswählen (-1 = File, -2 = letzter Folder, -3 = vorletzter Folder, ...)',
+    label: 'Ordner invertiert extrahieren (-1 = Datei, -2 = letzter Ordner, -3 = vorletzter Ordner, ...)',
     eingaben: [
       Eingabe(label: 'Rückwärts-Index', valueType: 'int'),
       Eingabe(label: 'Excel Spalte', valueType: 'String'),

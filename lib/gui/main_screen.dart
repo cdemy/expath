@@ -63,13 +63,13 @@ class _MainScreenState extends State<MainScreen> {
                       final confirmed = await showDialog<bool>(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: Text('Alles zurücksetzen'),
-                          content: Text('Möchten Sie alles zurücksetzen?'),
+                          title: Text('Alle nicht gespeicherten Daten gehen verloren!'),
+                          content: Text('Möchten Sie eine neue Instanz starten?'),
                           actions: [
                             TextButton(onPressed: () => Navigator.pop(context, false), child: Text('Abbrechen')),
                             TextButton(
                               onPressed: () => Navigator.pop(context, true),
-                              child: Text('Zurücksetzen'),
+                              child: Text('Neu starten'),
                             )
                           ],
                         ),
@@ -81,7 +81,7 @@ class _MainScreenState extends State<MainScreen> {
                         });
                         // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Alles zurückgesetzt.')),
+                          SnackBar(content: Text('Neue Instanz gestartet')),
                         );
                       }
                     },
@@ -180,12 +180,12 @@ class _MainScreenState extends State<MainScreen> {
                             });
                           }
                         },
-                        child: Text("Hinzufügen"),
+                        child: Text("Regelsatz hinzufügen"),
                       ),
                       SizedBox(width: 8),
-                      ElevatedButton(onPressed: _saveRules, child: Text("Speichern")),
+                      ElevatedButton(onPressed: _saveRules, child: Text("Regelsatz speichern")),
                       SizedBox(width: 8),
-                      ElevatedButton(onPressed: _loadRules, child: Text("Laden")),
+                      ElevatedButton(onPressed: _loadRules, child: Text("Regelsatz laden")),
                     ],
                   ),
                   SizedBox(height: 8),
@@ -205,28 +205,21 @@ class _MainScreenState extends State<MainScreen> {
                                     title: Text(rule.name),
                                     trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                                       IconButton(
-                                        icon: Icon(Icons.edit),
-                                        onPressed: () async {
-                                          final editedRule = await Navigator.push<Rule>(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => RuleEditorScreen(existingRule: rule),
-                                            ),
-                                          );
-                                          if (editedRule != null) {
-                                            setState(() {
-                                              rules[index] = editedRule;
-                                            });
-                                          }
-                                        },
+                                        icon: Icon(Icons.arrow_upward),
+                                        onPressed: index > 0 ? () => _moveRule(index, index - 1) : null,
                                       ),
                                       IconButton(
-                                          icon: Icon(Icons.delete),
-                                          onPressed: () {
-                                            setState(() {
-                                              rules.removeAt(index);
-                                            });
-                                          })
+                                        icon: Icon(Icons.arrow_downward),
+                                        onPressed: index < rules.length - 1 ? () => _moveRule(index, index + 1) : null,
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.edit),
+                                        onPressed: () => _editRule(index),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.delete),
+                                        onPressed: () => _removeRule(index),
+                                      )
                                     ]));
                               },
                             ),
@@ -263,5 +256,33 @@ class _MainScreenState extends State<MainScreen> {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Regeln geladen')));
     }
+  }
+
+  void _moveRule(int oldIndex, int newIndex) {
+    setState(() {
+      final rule = rules.removeAt(oldIndex);
+      rules.insert(newIndex, rule);
+    });
+  }
+
+  void _editRule(int index) async {
+    final editedRule = await Navigator.push<Rule>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RuleEditorScreen(existingRule: rules[index]),
+      ),
+    );
+
+    if (editedRule != null) {
+      setState(() {
+        rules[index] = editedRule;
+      });
+    }
+  }
+
+  void _removeRule(int index) {
+    setState(() {
+      rules.removeAt(index);
+    });
   }
 }

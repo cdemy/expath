@@ -4,18 +4,19 @@ Weitere Regelbausteine:
 	Dateiname ohne Erweiterung
 	Bestimmer Text nach Muster
 	Bestimmter Text nach Muster in Pfadsegment
+		 reicht erstmal
 
-Umsortierung von Regeln
+Umsortierung von Regeln yup
 
-An/Abwahl einzelner Dateipfade vor Generierung (in Vorschau?)
+An/Abwahl einzelner Dateipfade vor Generierung (in Vorschau?) yup
 
-Kommentare + Refactoring
+Kommentare + Refactoring yup
 
-Tooltips + ReadMe?
+Tooltips + ReadMe? nope
 
-Settings/Übersetzung?
+Settings/Übersetzung? nope
 
-GUI Verschönerung?
+GUI Verschönerung? nope
 
-was ist mit Impressum?
-was ist der Name der App?
+was ist mit Impressum? nope
+was ist der Name der App? 

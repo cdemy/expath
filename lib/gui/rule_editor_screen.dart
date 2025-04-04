@@ -33,6 +33,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
         case PathSegmentRule r:
           _inputControllers['Position'] = TextEditingController(text: r.index.toString());
           _inputControllers['Excel Spalte'] = TextEditingController(text: r.excelField);
+          _inputControllers['Regelname'] = TextEditingController(text: r.name);
           break;
 
         case ReversePathSegmentRule r:
@@ -44,18 +45,14 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
     }
   }
 
-  List<Eingabe> getVisibleInputs() {
-    if (selectedRuleType == null) return [];
-
-    return selectedRuleType!.eingaben.where((e) {
-      return selectedRuleType != RuleType.pathSegment || e.label != 'Regelname';
-    }).toList();
+  List<Eingabe> getInputs() {
+    return selectedRuleType?.eingaben ?? [];
   }
 
   void _saveRule() {
     if (selectedRuleType == null) return;
 
-    final inputs = getVisibleInputs();
+    final inputs = getInputs();
     List<Eingabewert> eingabeWerte = [];
 
     for (var eingabe in inputs) {
@@ -75,7 +72,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final visibleInputs = getVisibleInputs();
+    final visibleInputs = getInputs();
 
     return Scaffold(
       appBar: AppBar(
@@ -103,7 +100,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
                 setState(() {
                   selectedRuleType = value;
                   _inputControllers.clear();
-                  for (var eingabe in getVisibleInputs()) {
+                  for (var eingabe in getInputs()) {
                     _inputControllers[eingabe.label] = TextEditingController();
                   }
                 });
