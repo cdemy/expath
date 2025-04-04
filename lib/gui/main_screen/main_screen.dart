@@ -2,9 +2,9 @@ import 'package:dj_projektarbeit/gui/main_screen/_widgets/directories_list.dart'
 import 'package:dj_projektarbeit/gui/main_screen/_widgets/rules_list.dart';
 import 'package:dj_projektarbeit/gui/preview_screen/preview_screen.dart';
 import 'package:dj_projektarbeit/gui/rule_editor_screen/rule_editor_screen.dart';
-import 'package:dj_projektarbeit/logic/functions/save_load.dart';
-import 'package:dj_projektarbeit/logic/pathfinder.dart';
-import 'package:dj_projektarbeit/logic/root_directory_entry.dart';
+import 'package:dj_projektarbeit/logic/filesystem/save_load.dart';
+import 'package:dj_projektarbeit/logic/filesystem/pathfinder.dart';
+import 'package:dj_projektarbeit/logic/filesystem/root_directory_entry.dart';
 import 'package:dj_projektarbeit/logic/rules/_rule.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';

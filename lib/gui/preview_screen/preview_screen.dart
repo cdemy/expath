@@ -1,6 +1,6 @@
 import 'package:dj_projektarbeit/gui/preview_screen/_widgets/preview_table.dart';
-import 'package:dj_projektarbeit/logic/excel_exporter.dart';
-import 'package:dj_projektarbeit/logic/root_directory_entry.dart';
+import 'package:dj_projektarbeit/logic/excel/excel_exporter.dart';
+import 'package:dj_projektarbeit/logic/filesystem/root_directory_entry.dart';
 import 'package:dj_projektarbeit/logic/rules/_rule.dart';
 import 'package:flutter/material.dart';
 

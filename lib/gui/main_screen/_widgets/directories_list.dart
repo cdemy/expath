@@ -1,4 +1,4 @@
-import 'package:dj_projektarbeit/logic/root_directory_entry.dart';
+import 'package:dj_projektarbeit/logic/filesystem/root_directory_entry.dart';
 import 'package:flutter/material.dart';
 
 class DirectoriesList extends StatelessWidget {
