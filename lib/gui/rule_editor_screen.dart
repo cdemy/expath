@@ -99,7 +99,9 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
 
             // Dynamic input fields for regEx
             if (selectedRuleType?.eingaben.isNotEmpty ?? false)
-              ...selectedRuleType!.eingaben.map((eingabe) {
+              ...selectedRuleType!.eingaben
+                  .where((eingabe) => selectedRuleType != RuleType.pathSegment || eingabe.label != 'Regelname')
+                  .map((eingabe) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: TextField(

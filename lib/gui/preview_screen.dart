@@ -69,13 +69,11 @@ class _PreviewScreenState extends State<PreviewScreen> {
                             scrollDirection: Axis.vertical,
                             child: DataTable(
                               columns: [
-                                DataColumn(label: Text('Dateipfad')),
                                 ...widget.rules.map((rule) => DataColumn(label: Text(rule.excelField))),
                               ],
                               rows: allFiles.map((filePath) {
                                 return DataRow(
                                   cells: [
-                                    DataCell(Text(filePath)),
                                     ...widget.rules.map((rule) {
                                       final result = rule.apply(filePath) ?? "";
                                       return DataCell(Text(result));

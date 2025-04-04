@@ -25,7 +25,7 @@ class ExcelExporter {
     final Sheet sheet = excel['Sheet1'];
 
     // Header
-    final headers = ['Dateipfad', ...rules.map((r) => r.excelField)];
+    final headers = [...rules.map((r) => r.excelField)];
     for (int col = 0; col < headers.length; col++) {
       sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0)).value = headers[col];
     }
@@ -33,13 +33,10 @@ class ExcelExporter {
     // Input values
     final allFiles = directories.expand((dir) => dir.filePaths).toList();
     for (int i = 0; i < allFiles.length; i++) {
-      final filePath = allFiles[i];
-      sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: i + 1)).value = filePath;
-
       for (int j = 0; j < rules.length; j++) {
         final rule = rules[j];
-        final result = rule.apply(filePath) ?? '';
-        sheet.cell(CellIndex.indexByColumnRow(columnIndex: j + 1, rowIndex: i + 1)).value = result;
+        final result = rule.apply(allFiles[i]) ?? '';
+        sheet.cell(CellIndex.indexByColumnRow(columnIndex: j, rowIndex: i + 1)).value = result;
       }
     }
 

@@ -1,0 +1,21 @@
+Weitere Regelbausteine:
+	Pfadsegment von hinten (letzer/vorletzer Ordner)
+	Dateierweiterung extrahieren
+	Dateiname ohne Erweiterung
+	Bestimmer Text nach Muster
+	Bestimmter Text nach Muster in Pfadsegment
+
+Umsortierung von Regeln
+
+An/Abwahl einzelner Dateipfade vor Generierung (in Vorschau?)
+
+Kommentare + Refactoring
+
+Tooltips + ReadMe?
+
+Settings/Übersetzung?
+
+GUI Verschönerung?
+
+was ist mit Impressum?
+was ist der Name der App?

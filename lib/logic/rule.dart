@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dj_projektarbeit/logic/rule_type.dart';
 
 /// -----------------------------
@@ -62,6 +64,43 @@ class SimpleRegexRule implements Rule {
   }
 }
 
+class PathSegmentRule implements Rule {
+  final String name;
+  final String excelField;
+  final int index;
+
+  PathSegmentRule({required this.name, required this.excelField, required this.index});
+
+  @override
+  RuleType get type => RuleType.pathSegment;
+
+  @override
+  String get regex => '';
+
+  @override
+  String? apply(String input) {
+    final parts = input.split(Platform.pathSeparator);
+    if (index < 0 || index >= parts.length) return null;
+    return parts[index];
+  }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'type': type.name,
+        'name': name,
+        'excelField': excelField,
+        'index': index,
+      };
+
+  static PathSegmentRule fromJson(Map<String, dynamic> json) {
+    return PathSegmentRule(
+      name: json['name'],
+      excelField: json['excelField'],
+      index: json['index'],
+    );
+  }
+}
+
 /// -----------------------------
 /// RuleFactory
 /// -----------------------------
@@ -90,10 +129,29 @@ class RuleFactory {
           excelField: eingaben[1].value,
           regex: eingaben[0].value,
         );
+      case RuleType.pathSegment:
+        final index = int.parse(eingaben[0].value);
+        return PathSegmentRule(
+          name: 'Ordner an Position $index extrahieren',
+          excelField: eingaben[1].value,
+          index: index,
+        );
     }
   }
 
   static Rule fromJson(Map<String, dynamic> json) {
-    return SimpleRegexRule.fromJson(json);
+    final typeName = json['type'] as String;
+    final type = RuleType.values.firstWhere(
+      (e) => e.name == typeName,
+      orElse: () => throw Exception('Unbekannter Regeltyp: $typeName'),
+    );
+    switch (type) {
+      case RuleType.fileName:
+      case RuleType.parentDirectory:
+      case RuleType.regEx:
+        return SimpleRegexRule.fromJson(json);
+      case RuleType.pathSegment:
+        return PathSegmentRule.fromJson(json);
+    }
   }
 }
