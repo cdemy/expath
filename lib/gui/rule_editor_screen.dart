@@ -1,9 +1,10 @@
-import 'package:dj_projektarbeit/logic/rule_type.dart';
 import 'package:flutter/material.dart';
 import '../logic/rule.dart';
+import '../logic/rule_type.dart';
 
 class RuleEditorScreen extends StatefulWidget {
   final Rule? existingRule;
+
   const RuleEditorScreen({super.key, this.existingRule});
 
   @override
@@ -17,57 +18,68 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
   @override
   void initState() {
     super.initState();
+
     if (widget.existingRule != null) {
-      selectedRuleType = widget.existingRule!.type;
-      if (selectedRuleType != null) {
-        for (var eingabe in selectedRuleType!.eingaben) {
-          _inputControllers[eingabe.label] = TextEditingController();
-        }
-        if (widget.existingRule is SimpleRegexRule) {
-          final r = widget.existingRule as SimpleRegexRule;
-          _inputControllers['RegEx']?.text = r.regex;
-          _inputControllers['Excel Spalte']?.text = r.excelField;
-          _inputControllers['Regelname']?.text = r.name;
-        }
+      final rule = widget.existingRule!;
+      selectedRuleType = rule.type;
+
+      switch (rule) {
+        case SimpleRegexRule r:
+          _inputControllers['Regex'] = TextEditingController(text: r.regex);
+          _inputControllers['Excel Spalte'] = TextEditingController(text: r.excelField);
+          _inputControllers['Regelname'] = TextEditingController(text: r.name);
+          break;
+
+        case PathSegmentRule r:
+          _inputControllers['Position'] = TextEditingController(text: r.index.toString());
+          _inputControllers['Excel Spalte'] = TextEditingController(text: r.excelField);
+          // "Regelname" absichtlich nicht gesetzt, weil automatisch generiert wird
+          break;
       }
     }
+  }
+
+  List<Eingabe> getVisibleInputs() {
+    if (selectedRuleType == null) return [];
+
+    // Regelname bei pathSegment ausblenden
+    return selectedRuleType!.eingaben.where((e) {
+      return selectedRuleType != RuleType.pathSegment || e.label != 'Regelname';
+    }).toList();
   }
 
   void _saveRule() {
     if (selectedRuleType == null) return;
 
+    final inputs = getVisibleInputs();
     List<Eingabewert> eingabeWerte = [];
 
-    // Check if input is required and not empty
-    if (selectedRuleType!.eingaben.isNotEmpty) {
-      for (var eingabe in selectedRuleType!.eingaben) {
-        final controller = _inputControllers[eingabe.label];
-        if (controller == null || controller.text.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Bitte alle Felder ausfüllen')),
-          );
-          return;
-        }
-        eingabeWerte.add(Eingabewert(controller.text));
+    for (var eingabe in inputs) {
+      final controller = _inputControllers[eingabe.label];
+      if (controller == null || controller.text.trim().isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Bitte alle Felder ausfüllen')),
+        );
+        return;
       }
+      eingabeWerte.add(Eingabewert(controller.text.trim()));
     }
 
-    // Create Rule
     final rule = RuleFactory.fromEingaben(selectedRuleType!, eingabeWerte);
-
-    // Return Rule to previous screen
     Navigator.pop(context, rule);
   }
 
   @override
   Widget build(BuildContext context) {
+    final visibleInputs = getVisibleInputs();
+
     return Scaffold(
       appBar: AppBar(
+        title: Text(widget.existingRule == null ? 'Neue Regel erstellen' : 'Regel bearbeiten'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Regel Editor'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -77,46 +89,37 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
             DropdownButtonFormField<RuleType>(
               decoration: InputDecoration(labelText: 'Regeltyp auswählen'),
               value: selectedRuleType,
-              items: RuleType.values.map((ruleType) {
+              items: RuleType.values.map((type) {
                 return DropdownMenuItem(
-                  value: ruleType,
-                  child: Text(ruleType.label),
+                  value: type,
+                  child: Text(type.label),
                 );
               }).toList(),
               onChanged: (value) {
                 setState(() {
                   selectedRuleType = value;
                   _inputControllers.clear();
-                  if (value != null && value.eingaben.isNotEmpty) {
-                    for (var eingabe in value.eingaben) {
-                      _inputControllers[eingabe.label] = TextEditingController();
-                    }
+                  for (var eingabe in getVisibleInputs()) {
+                    _inputControllers[eingabe.label] = TextEditingController();
                   }
                 });
               },
             ),
             SizedBox(height: 16),
-
-            // Dynamic input fields for regEx
-            if (selectedRuleType?.eingaben.isNotEmpty ?? false)
-              ...selectedRuleType!.eingaben
-                  .where((eingabe) => selectedRuleType != RuleType.pathSegment || eingabe.label != 'Regelname')
-                  .map((eingabe) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: TextField(
-                    controller: _inputControllers[eingabe.label],
-                    decoration: InputDecoration(
-                      labelText: eingabe.label,
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: eingabe.valueType == 'int' ? TextInputType.number : TextInputType.text,
+            ...visibleInputs.map((eingabe) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: TextField(
+                  controller: _inputControllers[eingabe.label],
+                  decoration: InputDecoration(
+                    labelText: eingabe.label,
+                    border: OutlineInputBorder(),
                   ),
-                );
-              }),
-
+                  keyboardType: eingabe.valueType == 'int' ? TextInputType.number : TextInputType.text,
+                ),
+              );
+            }),
             SizedBox(height: 24),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
