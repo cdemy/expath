@@ -72,7 +72,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                             scrollDirection: Axis.vertical,
                             child: DataTable(
                               columns: [
-                                DataColumn(label: Text('✔')), // Checkbox-Spalte
+                                DataColumn(label: Text('An/Abwählen')), // Checkbox-Spalte
                                 ...widget.rules.map((rule) => DataColumn(label: Text(rule.excelField))),
                               ],
                               rows: allFiles.map((filePath) {

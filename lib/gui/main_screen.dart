@@ -109,25 +109,6 @@ class _MainScreenState extends State<MainScreen> {
                   },
                   child: Text("Vorschau"),
                 ),
-                SizedBox(width: 8),
-                ElevatedButton(
-                    onPressed: () async {
-                      try {
-                        await ExcelExporter.export(
-                          directories: directories,
-                          rules: rules,
-                        );
-                        // ignore: use_build_context_synchronously
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(SnackBar(content: Text('Excel-Datei erfolgreich exportiert')));
-                      } catch (e) {
-                        // ignore: use_build_context_synchronously
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Fehler: $e')),
-                        );
-                      }
-                    },
-                    child: Text("Excel-Datei generieren")),
               ],
             ),
             SizedBox(height: 8),
@@ -142,27 +123,58 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                       child: directories.isEmpty
                           ? Center(child: Text('Noch keine Verzeichnisse hinzugefügt.'))
-                          : ListView.builder(
-                              itemCount: directories.length,
-                              itemBuilder: (context, index) {
-                                final dir = directories[index];
-                                return ListTile(
-                                  leading: Icon(Icons.folder),
-                                  title: Text(dir.path),
-                                  subtitle: Row(children: [
-                                    Icon(Icons.insert_drive_file, size: 16),
-                                    SizedBox(width: 4),
-                                    Text('${dir.fileCount} Dateien'),
-                                  ]),
-                                  trailing: IconButton(
-                                    icon: Icon(Icons.delete),
-                                    onPressed: () => removeDirectory(index),
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                          flex: 6,
+                                          child: Text('Ordnerpfad', style: TextStyle(fontWeight: FontWeight.bold))),
+                                      Expanded(
+                                          flex: 2,
+                                          child: Text('Dateien', style: TextStyle(fontWeight: FontWeight.bold))),
+                                      Expanded(flex: 2, child: SizedBox()), // Leerer Platz für Aktionen (Icons)
+                                    ],
                                   ),
-                                );
-                              },
+                                ),
+                                Expanded(
+                                  child: ListView.builder(
+                                    itemCount: directories.length,
+                                    itemBuilder: (context, index) {
+                                      final dir = directories[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                        child: Row(
+                                          children: [
+                                            Expanded(flex: 6, child: Text(dir.path)),
+                                            Expanded(flex: 2, child: Text('${dir.fileCount} Dateien')),
+                                            Expanded(
+                                              flex: 2,
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                children: [
+                                                  IconButton(
+                                                    icon: Icon(Icons.delete),
+                                                    onPressed: () => removeDirectory(index),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
                     ),
                   ),
+
                   SizedBox(height: 8),
 
                   /// ------------------- List of Rules -------------------
@@ -197,31 +209,70 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                       child: rules.isEmpty
                           ? Center(child: Text("Noch keine Regeln hinzugefügt."))
-                          : ListView.builder(
-                              itemCount: rules.length,
-                              itemBuilder: (context, index) {
-                                final rule = rules[index];
-                                return ListTile(
-                                    title: Text(rule.name),
-                                    trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                                      IconButton(
-                                        icon: Icon(Icons.arrow_upward),
-                                        onPressed: index > 0 ? () => _moveRule(index, index - 1) : null,
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.arrow_downward),
-                                        onPressed: index < rules.length - 1 ? () => _moveRule(index, index + 1) : null,
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.edit),
-                                        onPressed: () => _editRule(index),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.delete),
-                                        onPressed: () => _removeRule(index),
-                                      )
-                                    ]));
-                              },
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                          flex: 3,
+                                          child: Text('Excel-Spalte', style: TextStyle(fontWeight: FontWeight.bold))),
+                                      Expanded(
+                                          flex: 4,
+                                          child: Text('Regelname', style: TextStyle(fontWeight: FontWeight.bold))),
+                                      Expanded(
+                                          flex: 3,
+                                          child: Text('Aktionen', style: TextStyle(fontWeight: FontWeight.bold))),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: ListView.builder(
+                                    itemCount: rules.length,
+                                    itemBuilder: (context, index) {
+                                      final rule = rules[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                        child: Row(
+                                          children: [
+                                            Expanded(flex: 3, child: Text(rule.excelField)),
+                                            Expanded(flex: 4, child: Text(rule.name)),
+                                            Expanded(
+                                              flex: 3,
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  IconButton(
+                                                    icon: Icon(Icons.arrow_upward),
+                                                    onPressed: index > 0 ? () => _moveRule(index, index - 1) : null,
+                                                  ),
+                                                  IconButton(
+                                                    icon: Icon(Icons.arrow_downward),
+                                                    onPressed: index < rules.length - 1
+                                                        ? () => _moveRule(index, index + 1)
+                                                        : null,
+                                                  ),
+                                                  IconButton(
+                                                    icon: Icon(Icons.edit),
+                                                    onPressed: () => _editRule(index),
+                                                  ),
+                                                  IconButton(
+                                                    icon: Icon(Icons.delete),
+                                                    onPressed: () => _removeRule(index),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
                     ),
                   ),
