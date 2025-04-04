@@ -101,6 +101,48 @@ class PathSegmentRule implements Rule {
   }
 }
 
+class ReversePathSegmentRule implements Rule {
+  final String name;
+  final String excelField;
+  final int reverseIndex;
+
+  ReversePathSegmentRule({
+    required this.name,
+    required this.excelField,
+    required this.reverseIndex,
+  });
+
+  @override
+  RuleType get type => RuleType.reversePathSegment;
+
+  @override
+  String get regex => '';
+
+  @override
+  String? apply(String input) {
+    final parts = input.split(Platform.pathSeparator);
+    final index = parts.length + reverseIndex;
+    if (index < 0 || index >= parts.length) return null;
+    return parts[index];
+  }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'type': type.name,
+        'name': name,
+        'excelField': excelField,
+        'reverseIndex': reverseIndex,
+      };
+
+  static ReversePathSegmentRule fromJson(Map<String, dynamic> json) {
+    return ReversePathSegmentRule(
+      name: json['name'],
+      excelField: json['excelField'],
+      reverseIndex: json['reverseIndex'],
+    );
+  }
+}
+
 /// -----------------------------
 /// RuleFactory
 /// -----------------------------
@@ -122,19 +164,25 @@ class RuleFactory {
           excelField: type.defaultExcelField!,
           regex: type.defaultRegex!,
         );
-      case RuleType.regEx:
-        return SimpleRegexRule(
-          type: type,
-          name: eingaben[2].value,
-          excelField: eingaben[1].value,
-          regex: eingaben[0].value,
-        );
       case RuleType.pathSegment:
         final index = int.parse(eingaben[0].value);
         return PathSegmentRule(
           name: 'Ordner an Position $index extrahieren',
           excelField: eingaben[1].value,
           index: index,
+        );
+      case RuleType.reversePathSegment:
+        return ReversePathSegmentRule(
+          name: 'Ordner von hinten auswählen',
+          excelField: eingaben[1].value,
+          reverseIndex: int.parse(eingaben[0].value),
+        );
+      case RuleType.regEx:
+        return SimpleRegexRule(
+          type: type,
+          name: eingaben[2].value,
+          excelField: eingaben[1].value,
+          regex: eingaben[0].value,
         );
     }
   }
@@ -145,13 +193,16 @@ class RuleFactory {
       (e) => e.name == typeName,
       orElse: () => throw Exception('Unbekannter Regeltyp: $typeName'),
     );
+
     switch (type) {
       case RuleType.fileName:
       case RuleType.parentDirectory:
-      case RuleType.regEx:
-        return SimpleRegexRule.fromJson(json);
       case RuleType.pathSegment:
         return PathSegmentRule.fromJson(json);
+      case RuleType.reversePathSegment:
+        return ReversePathSegmentRule.fromJson(json);
+      case RuleType.regEx:
+        return SimpleRegexRule.fromJson(json);
     }
   }
 }

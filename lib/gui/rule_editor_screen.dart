@@ -34,6 +34,12 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
           _inputControllers['Position'] = TextEditingController(text: r.index.toString());
           _inputControllers['Excel Spalte'] = TextEditingController(text: r.excelField);
           break;
+
+        case ReversePathSegmentRule r:
+          _inputControllers['Rückwärts-Index'] = TextEditingController(text: r.reverseIndex.toString());
+          _inputControllers['Excel Spalte'] = TextEditingController(text: r.excelField);
+          _inputControllers['Regelname'] = TextEditingController(text: r.name);
+          break;
       }
     }
   }

@@ -23,6 +23,14 @@ enum RuleType {
       Eingabe(label: 'Regelname', valueType: 'String'),
     ],
   ),
+  reversePathSegment(
+    label: 'Ordner von hinten auswählen (-1 = File, -2 = letzter Folder, -3 = vorletzter Folder, ...)',
+    eingaben: [
+      Eingabe(label: 'Rückwärts-Index', valueType: 'int'),
+      Eingabe(label: 'Excel Spalte', valueType: 'String'),
+      Eingabe(label: 'Regelname', valueType: 'String'),
+    ],
+  ),
   regEx(
     label: 'Benutzerdefinierter Regex',
     eingaben: [
