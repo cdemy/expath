@@ -1,4 +1,4 @@
-import 'package:dj_projektarbeit/gui/main_screen.dart';
+import 'package:dj_projektarbeit/gui/main_screen/main_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'root_directory_entry.dart';
-import 'rule.dart';
+import 'rules/_rule.dart';
 
 class ExcelExporter {
   static Future<void> export({

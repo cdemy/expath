@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../logic/rule.dart';
-import '../logic/rule_type.dart';
+import '../../logic/rules/_rule.dart';
+import '../../logic/rules/_rule_type.dart';
 
 class RuleEditorScreen extends StatefulWidget {
   final Rule? existingRule;
@@ -13,67 +13,44 @@ class RuleEditorScreen extends StatefulWidget {
 
 class _RuleEditorScreenState extends State<RuleEditorScreen> {
   RuleType? selectedRuleType;
-  final Map<String, TextEditingController> _inputControllers = {};
+  Rule? selectedRule;
+  final ctrlSpalte = TextEditingController();
+  final List<TitledTextEditingController> _eingabenControllers = [];
 
   @override
   void initState() {
     super.initState();
 
     if (widget.existingRule != null) {
-      final rule = widget.existingRule!;
-      selectedRuleType = rule.type;
-
-      switch (rule) {
-        case SimpleRegexRule r:
-          _inputControllers['Regex'] = TextEditingController(text: r.regex);
-          _inputControllers['Excel Spalte'] = TextEditingController(text: r.excelField);
-          _inputControllers['Regelname'] = TextEditingController(text: r.name);
-          break;
-
-        case PathSegmentRule r:
-          _inputControllers['Position'] = TextEditingController(text: r.index.toString());
-          _inputControllers['Excel Spalte'] = TextEditingController(text: r.excelField);
-          _inputControllers['Regelname'] = TextEditingController(text: r.name);
-          break;
-
-        case ReversePathSegmentRule r:
-          _inputControllers['Rückwärts-Index'] = TextEditingController(text: r.reverseIndex.toString());
-          _inputControllers['Excel Spalte'] = TextEditingController(text: r.excelField);
-          _inputControllers['Regelname'] = TextEditingController(text: r.name);
-          break;
+      selectedRule = widget.existingRule!;
+      for (final eingabe in selectedRule!.eingaben) {
+        _eingabenControllers.add(TitledTextEditingController(
+          label: eingabe.label,
+          controller: TextEditingController(text: eingabe.value()),
+          valueType: eingabe.valueType,
+        ));
       }
     }
   }
 
-  List<Eingabe> getInputs() {
-    return selectedRuleType?.eingaben ?? [];
-  }
-
   void _saveRule() {
-    if (selectedRuleType == null) return;
-
-    final inputs = getInputs();
-    List<Eingabewert> eingabeWerte = [];
-
-    for (var eingabe in inputs) {
-      final controller = _inputControllers[eingabe.label];
-      if (controller == null || controller.text.trim().isEmpty) {
+    if (selectedRule == null) return;
+    selectedRule!.excelField = ctrlSpalte.text.trim();
+    for (final ctrl in _eingabenControllers) {
+      final value = ctrl.controller.text.trim();
+      if (value.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Bitte alle Felder ausfüllen')),
         );
         return;
       }
-      eingabeWerte.add(Eingabewert(controller.text.trim()));
+      selectedRule!.eingaben.firstWhere((e) => e.label == ctrl.label).setValue(value);
     }
-
-    final rule = RuleFactory.fromEingaben(selectedRuleType!, eingabeWerte);
-    Navigator.pop(context, rule);
+    Navigator.pop(context, selectedRule);
   }
 
   @override
   Widget build(BuildContext context) {
-    final visibleInputs = getInputs();
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.existingRule == null ? 'Neue Regel erstellen' : 'Regel bearbeiten'),
@@ -99,24 +76,46 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
               onChanged: (value) {
                 setState(() {
                   selectedRuleType = value;
-                  _inputControllers.clear();
-                  for (var eingabe in getInputs()) {
-                    _inputControllers[eingabe.label] = TextEditingController();
+                  // Switching to a new rule type
+                  _eingabenControllers.clear();
+                  selectedRule = null;
+                  ctrlSpalte.clear();
+                  if (selectedRuleType != null) {
+                    selectedRule = value!.constructor();
+                    ctrlSpalte.text = selectedRule!.excelField;
+                    for (var eingabe in selectedRule!.eingaben) {
+                      _eingabenControllers.add(TitledTextEditingController(
+                        label: eingabe.label,
+                        controller: TextEditingController(text: eingabe.value()),
+                        valueType: eingabe.valueType,
+                      ));
+                    }
                   }
                 });
               },
             ),
             SizedBox(height: 16),
-            ...visibleInputs.map((eingabe) {
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: TextField(
+                controller: ctrlSpalte,
+                decoration: InputDecoration(
+                  labelText: 'Spalte',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.text,
+              ),
+            ),
+            ..._eingabenControllers.map((eingabe) {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: TextField(
-                  controller: _inputControllers[eingabe.label],
+                  controller: eingabe.controller,
                   decoration: InputDecoration(
                     labelText: eingabe.label,
                     border: OutlineInputBorder(),
                   ),
-                  keyboardType: eingabe.valueType == 'int' ? TextInputType.number : TextInputType.text,
+                  keyboardType: eingabe.valueType == int ? TextInputType.number : TextInputType.text,
                 ),
               );
             }),
@@ -139,4 +138,16 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
       ),
     );
   }
+}
+
+class TitledTextEditingController {
+  final String label;
+  final TextEditingController controller;
+  final Type valueType;
+
+  TitledTextEditingController({
+    required this.label,
+    required this.controller,
+    required this.valueType,
+  });
 }
