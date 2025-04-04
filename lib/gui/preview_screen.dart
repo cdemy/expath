@@ -21,6 +21,16 @@ class _PreviewScreenState extends State<PreviewScreen> {
   final ScrollController _verticalController = ScrollController();
   final ScrollController _horizontalController = ScrollController();
 
+  late List<String> allFiles;
+  late Map<String, bool> selectedRows;
+
+  @override
+  void initState() {
+    super.initState();
+    allFiles = widget.directories.expand((dir) => dir.filePaths).toList();
+    selectedRows = {for (var file in allFiles) file: true};
+  }
+
   @override
   void dispose() {
     _verticalController.dispose();
@@ -28,24 +38,17 @@ class _PreviewScreenState extends State<PreviewScreen> {
     super.dispose();
   }
 
+  void _toggleSelection(String filePath, bool? selected) {
+    setState(() {
+      selectedRows[filePath] = selected ?? false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final allFiles = widget.directories.expand((dir) => dir.filePaths).toList();
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Vorschau"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.file_download),
-            tooltip: "Export nach Excel (noch ohne Funktion)",
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Export noch nicht implementiert.")),
-              );
-            },
-          ),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -69,11 +72,19 @@ class _PreviewScreenState extends State<PreviewScreen> {
                             scrollDirection: Axis.vertical,
                             child: DataTable(
                               columns: [
+                                DataColumn(label: Text('✔')), // Checkbox-Spalte
                                 ...widget.rules.map((rule) => DataColumn(label: Text(rule.excelField))),
                               ],
                               rows: allFiles.map((filePath) {
+                                final isChecked = selectedRows[filePath] ?? false;
                                 return DataRow(
                                   cells: [
+                                    DataCell(
+                                      Checkbox(
+                                        value: isChecked,
+                                        onChanged: (val) => _toggleSelection(filePath, val),
+                                      ),
+                                    ),
                                     ...widget.rules.map((rule) {
                                       final result = rule.apply(filePath) ?? "";
                                       return DataCell(Text(result));
@@ -90,17 +101,27 @@ class _PreviewScreenState extends State<PreviewScreen> {
                   SizedBox(height: 8),
                   ElevatedButton.icon(
                     onPressed: () async {
+                      final selectedPaths = allFiles.where((path) => selectedRows[path] == true).toList();
+
+                      if (selectedPaths.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Keine Zeilen ausgewählt für Export.")),
+                        );
+                        return;
+                      }
+
                       try {
                         await ExcelExporter.export(
-                          directories: widget.directories,
+                          directories: [RootDirectoryEntry("Selektierte Dateien", selectedPaths)],
                           rules: widget.rules,
                         );
-                        // ignore: use_build_context_synchronously
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(SnackBar(content: Text('Excel-Datei erfolgreich exportiert!')));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Excel-Datei erfolgreich exportiert!')),
+                        );
                       } catch (e) {
-                        // ignore: use_build_context_synchronously
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Fehler: $e')));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Fehler beim Export: $e')),
+                        );
                       }
                     },
                     icon: Icon(Icons.file_download),
