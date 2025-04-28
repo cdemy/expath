@@ -25,7 +25,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('RegEx Pathfinder'),
+        title: Text('EXPATH'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
