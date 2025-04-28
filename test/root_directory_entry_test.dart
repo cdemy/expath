@@ -3,8 +3,8 @@ import 'package:dj_projektarbeit/logic/filesystem/root_directory_entry.dart';
 
 void main() {
   test('RootDirectoryEntry speichert Pfad korrekt', () {
-    final rootEntry = RootDirectoryEntry('C:/Daten');
+    final rootEntry = RootDirectoryEntry('C:\\Daten', []);
 
-    expect(rootEntry.path, 'C:/Daten');
+    expect(rootEntry.path, 'C:\\Daten');
   });
 }

@@ -1,4 +1,3 @@
-import 'package:dj_projektarbeit/logic/rules/_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/simple_regex_rule.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -6,7 +5,7 @@ void main() {
   test('SimpleRegexRule findet korrekten Treffer im Pfad', () {
     final rule = SimpleRegexRule();
     rule.regex = 'Patent_(\\d+)';
-    final path = 'C:/Daten/Patent_12345/Akte.pdf';
+    final path = 'C:\\Daten\\Patent_12345\\Akte.pdf';
 
     final result = rule.apply(path);
 
@@ -16,7 +15,7 @@ void main() {
   test('SimpleRegexRule gibt null zurück, wenn kein Treffer', () {
     final rule = SimpleRegexRule();
     rule.regex = 'Marke_(\\d+)';
-    final path = 'C:/Daten/Patent_12345/Akte.pdf';
+    final path = 'C:\\Daten\\Patent_12345\\Akte.pdf';
 
     final result = rule.apply(path);
 
@@ -25,7 +24,7 @@ void main() {
   test('SimpleRegexRule toJson gibt korrektes Map-Objekt zurück', () {
     final rule = SimpleRegexRule();
     rule.regex = 'Patent_(\\d+)';
-    rule.excelField = 'Spalte'; // Standardwert
+    rule.excelField = 'Spalte';
     final expectedJson = {
       'type': 'simpleRegex',
       'excelField': 'Spalte',
@@ -52,7 +51,7 @@ void main() {
   test('SimpleRegexRule toJson und fromJson sind zueinander konsistent', () {
     final originalRule = SimpleRegexRule();
     originalRule.regex = 'Patent_(\\d+)';
-    originalRule.excelField = 'Spalte'; // Standardwert
+    originalRule.excelField = 'Spalte';
 
     final json = originalRule.toJson();
     final newRule = SimpleRegexRule.fromJson(json);
