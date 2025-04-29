@@ -11,7 +11,7 @@ class SimpleRegexRule extends Rule {
   String regex;
 
   SimpleRegexRule()
-      : type = 'simpleRegex',
+      : type = 'regEx',
         excelField = 'Spalte',
         regex = '';
 
