@@ -10,6 +10,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 
+/// MainScreen of the Application
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 

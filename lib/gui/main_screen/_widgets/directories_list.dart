@@ -23,12 +23,13 @@ class DirectoriesList extends StatelessWidget {
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  // ignore: deprecated_member_use
                   color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
                   child: Row(
                     children: [
                       Expanded(flex: 6, child: Text('Ordnerpfad', style: TextStyle(fontWeight: FontWeight.bold))),
                       Expanded(flex: 2, child: Text('Dateien', style: TextStyle(fontWeight: FontWeight.bold))),
-                      Expanded(flex: 2, child: SizedBox()), // Leerer Platz für Aktionen (Icons)
+                      Expanded(flex: 2, child: SizedBox()),
                     ],
                   ),
                 ),

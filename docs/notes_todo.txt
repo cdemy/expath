@@ -4,7 +4,7 @@
 3.3 Use-Case-Diagramm (hab ich)
 4.3 Mock-Up der Benutzeroberfläche (hab ich)
 4.4 Klassendiagramm zu Rule und Subklassen (hab ich)
-5.1.1 Codebeispiel Benutzeroberfläche
+5.1.1 Codebeispiel Benutzeroberfläche (hab ich 2x)
 5.1.1 Beispiel tatsächliche Benutzeroberfläche
 5.2 Codebeispiel (am besten für Rule und Subklassen)
 5.2 Codebeispiel für enum zur Typbestimmung
