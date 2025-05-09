@@ -72,7 +72,7 @@ class _MainScreenState extends State<MainScreen> {
                 // "Add rule" button
                 ElevatedButton(
                   onPressed: _addRule,
-                  child: Text("Regelsatz hinzufügen"),
+                  child: Text("Regel hinzufügen"),
                 ),
                 SizedBox(width: 8),
                 // "Save rules" button
