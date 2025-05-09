@@ -16,7 +16,9 @@ abstract class SaveLoad {
     final file = File(filePath);
     if (!file.existsSync()) return [];
     final jsonString = await file.readAsString();
-    final List<Map<String, dynamic>> jsonList = jsonDecode(jsonString) as List<Map<String, dynamic>>;
+    // final List<Map<String, dynamic>> jsonList = jsonDecode(jsonString) as List<Map<String, dynamic>>;
+    final jsonRawList = jsonDecode(jsonString) as List<dynamic>;
+    final jsonList = jsonRawList.cast<Map<String, dynamic>>();
     return jsonList.map((e) {
       final type = e['type'] as String;
       final ruleType = RuleType.fromType(type);
