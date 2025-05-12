@@ -51,6 +51,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ruleTypeLabels = RuleType.values.map((e) => e.label).toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.existingRule == null ? 'Neue Regel erstellen' : 'Regel bearbeiten'),
@@ -64,6 +65,40 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Autocomplete<String>(
+            //   initialValue: TextEditingValue(text: selectedRuleType?.label ?? ''),
+            //   optionsBuilder: (TextEditingValue textEditingValue) {
+            //     if (textEditingValue.text.isEmpty) return ruleTypeLabels;
+            //     return ruleTypeLabels
+            //         .where((label) => label.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+            //   },
+            //   onSelected: (String selection) {
+            //     final matchedType = RuleType.values.firstWhere((type) => type.label == selection);
+            //     setState(() {
+            //       selectedRuleType = matchedType;
+            //       _eingabenControllers.clear();
+            //       selectedRule = matchedType.constructor();
+            //       ctrlSpalte.text = selectedRule!.excelField;
+            //       for (var eingabe in selectedRule!.eingaben) {
+            //         _eingabenControllers.add(TitledTextEditingController(
+            //           label: eingabe.label,
+            //           controller: TextEditingController(text: eingabe.value()),
+            //           valueType: eingabe.valueType,
+            //         ));
+            //       }
+            //     });
+            //   },
+            //   fieldViewBuilder: (context, controller, focusNode, onEditingComplete) {
+            //     return TextField(
+            //       controller: controller,
+            //       focusNode: focusNode,
+            //       decoration: InputDecoration(
+            //         labelText: 'Regeltyp (tippen oder auswählen)',
+            //         border: OutlineInputBorder(),
+            //       ),
+            //     );
+            //   },
+            // ),
             DropdownButtonFormField<RuleType>(
               decoration: InputDecoration(labelText: 'Regeltyp auswählen'),
               value: selectedRuleType,
