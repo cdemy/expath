@@ -4,6 +4,6 @@ beim editieren Regeltyp und vorherige Eingaben beibehalten
 
 Excel-Export & Regel speichern, wenn kürzel weggelassen wird
 
-Metadaten extrahieren können (erfordert etwas größere Umbauten)
+Metadaten extrahieren können (Umstellung auf File statt Path)
 
 Dropdown Menüs ändern (eintippen ermöglichen)
