@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dj_projektarbeit/logic/filesystem/document_info.dart';
 import 'package:flutter/foundation.dart';
 
 class Pathfinder {
@@ -34,5 +35,24 @@ class Pathfinder {
     scanDirectory(directory);
 
     return filePaths;
+  }
+
+  Future<List<DocumentInfo>> getAllDocumentInfos() async {
+    final List<DocumentInfo> documentInfos = [];
+    final directory = Directory(rootDirectoryPath);
+    if (!directory.existsSync()) {
+      throw Exception("Directory does not exist: $rootDirectoryPath");
+    }
+    await _scanDirectory(directory, documentInfos);
+    return documentInfos;
+  }
+
+  Future<void> _scanDirectory(Directory dir, List<DocumentInfo> collector) async {
+    await for (final entity in dir.list(recursive: true)) {
+      if (entity is File) {
+        final info = await DocumentInfo.fromPath(entity.path);
+        collector.add(info);
+      }
+    }
   }
 }
