@@ -35,7 +35,7 @@ class SimpleRegexRule extends Rule {
   String? apply(String input) {
     final regExp = RegExp(regex, caseSensitive: false, multiLine: true);
     final match = regExp.firstMatch(input);
-    return match?.group(0);
+    return match?.groupCount == 0 ? match?.group(0) : match?.group(1);
   }
 
   @override
