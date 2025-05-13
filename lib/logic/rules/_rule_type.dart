@@ -62,4 +62,3 @@ enum RuleType {
     );
   }
 }
-
