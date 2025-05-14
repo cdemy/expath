@@ -31,7 +31,7 @@ class ExcelExporter {
     }
 
     // Input values
-    final allFiles = directories.expand((dir) => dir.filePaths).toList();
+    final allFiles = directories.expand((dir) => dir.files).toList();
     for (int i = 0; i < allFiles.length; i++) {
       for (int j = 0; j < rules.length; j++) {
         final rule = rules[j];

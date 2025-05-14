@@ -22,8 +22,9 @@ class ReversePathSegmentRule extends Rule {
         reverseIndex = 0;
 
   @override
-  String? apply(String input) {
-    final parts = input.split(Platform.pathSeparator);
+  String? apply(File input) {
+    final path = input.path;
+    final parts = path.split(Platform.pathSeparator);
     final index = parts.length - 1 - reverseIndex;
     if (index < 0 || index >= parts.length) return null;
     return parts[index];

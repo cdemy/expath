@@ -1,4 +1,5 @@
 import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/metadata_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/path_segment_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/reverse_path_segment.dart';
 import 'package:dj_projektarbeit/logic/rules/simple_regex_rule.dart';
@@ -39,6 +40,12 @@ enum RuleType {
     type: 'regEx',
     constructor: SimpleRegexRule.new,
     fromJson: SimpleRegexRule.fromJson,
+  ),
+  metadata(
+    label: 'Metadaten',
+    type: 'metadata',
+    constructor: MetadataRule.new,
+    fromJson: MetadataRule.fromJson,
   );
 
   const RuleType({

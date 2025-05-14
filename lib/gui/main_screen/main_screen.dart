@@ -231,7 +231,7 @@ class _MainScreenState extends State<MainScreen> {
       }
 
       final pathfinder = Pathfinder(selectedDirectory);
-      final files = pathfinder.getAllFilePaths();
+      final files = pathfinder.getAllFiles();
 
       setState(() {
         directories.add(RootDirectoryEntry(selectedDirectory, files));

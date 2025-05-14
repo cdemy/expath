@@ -1,9 +1,11 @@
+import 'dart:io';
+
 import 'package:dj_projektarbeit/logic/rules/_rule.dart';
 import 'package:flutter/material.dart';
 
 class PreviewTable extends StatelessWidget {
   final List<Rule> rules;
-  final List<String> allFiles;
+  final List<File> allFiles;
   final Map<String, bool> selectedRows;
   final void Function(String, bool?) toggleSelection;
 
@@ -29,7 +31,7 @@ class PreviewTable extends StatelessWidget {
             DataCell(
               Checkbox(
                 value: isChecked,
-                onChanged: (val) => toggleSelection(filePath, val),
+                onChanged: (val) => toggleSelection(filePath.path, val),
               ),
             ),
             ...rules.map((rule) {

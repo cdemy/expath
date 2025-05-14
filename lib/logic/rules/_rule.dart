@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dj_projektarbeit/logic/rules/_eingabe.dart';
 import 'package:dj_projektarbeit/logic/rules/_rule_type.dart';
 
@@ -9,7 +11,7 @@ abstract class Rule {
   String get type;
   String get excelField;
   set excelField(String value);
-  String? apply(String input);
+  String? apply(File input);
   Map<String, dynamic> toJson();
 
   RuleType get ruleType => RuleType.fromType(type);

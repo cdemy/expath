@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dj_projektarbeit/logic/rules/_eingabe.dart';
 import 'package:dj_projektarbeit/logic/rules/_rule.dart';
 
@@ -32,9 +34,10 @@ class SimpleRegexRule extends Rule {
   });
 
   @override
-  String? apply(String input) {
+  String? apply(File input) {
+    final path = input.path;
     final regExp = RegExp(regex, caseSensitive: false, multiLine: true);
-    final match = regExp.firstMatch(input);
+    final match = regExp.firstMatch(path);
     return match?.groupCount == 0 ? match?.group(0) : match?.group(1);
   }
 

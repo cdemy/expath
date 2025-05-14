@@ -4,6 +4,9 @@ beim editieren Regeltyp und vorherige Eingaben beibehalten
 
 Excel-Export & Regel speichern, wenn kürzel weggelassen wird
 
+Ebenfalls beim Speichern und beim Auswählen von Rootordnern
+möglichst nicht den letzten verwendeten Ordner automatisch auswählen
+
 Metadaten extrahieren können (Umstellung auf File statt Path)
 
 Dropdown Menüs ändern (eintippen ermöglichen)
@@ -12,3 +15,5 @@ List<Rules> anstelle von Rules | List mit einem Element wie bisher
 Um mehrere Regelanwendungen in einem Rutsch abzuarbeiten
 zB Rules = [Gib mir Name des zweiten Folders, Gib mir Zeichen 3-7] = Zeichen 3-7 des zweiten Folders
 prüfen welche alternativen es dazu geben könnte.
+
+Im Vorschauscreen sollten die Scrollbars an die Bildschirmgröße angepasst sein

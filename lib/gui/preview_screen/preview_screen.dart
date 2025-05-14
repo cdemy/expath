@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dj_projektarbeit/gui/preview_screen/_widgets/preview_table.dart';
 import 'package:dj_projektarbeit/logic/excel/excel_exporter.dart';
 import 'package:dj_projektarbeit/logic/filesystem/root_directory_entry.dart';
@@ -22,7 +24,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
   final ScrollController _verticalController = ScrollController();
   final ScrollController _horizontalController = ScrollController();
 
-  late List<String> allFiles;
+  late List<File> allFiles;
   late Map<String, bool> selectedRows;
 
   @override
@@ -84,8 +86,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
   @override
   void initState() {
     super.initState();
-    allFiles = widget.directories.expand((dir) => dir.filePaths).toList();
-    selectedRows = {for (var file in allFiles) file: true};
+    allFiles = widget.directories.expand((dir) => dir.files).toList();
+    selectedRows = {for (var file in allFiles) file.path: true};
   }
 
   void _generateExcel() async {

@@ -37,8 +37,9 @@ class PathSegmentRule extends Rule {
         index = 0;
 
   @override
-  String? apply(String input) {
-    final parts = input.split(Platform.pathSeparator);
+  String? apply(File input) {
+    final path = input.path;
+    final parts = path.split(Platform.pathSeparator);
     if (index < 0 || index >= parts.length) return null;
     return parts[index];
   }
