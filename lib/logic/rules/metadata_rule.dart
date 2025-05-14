@@ -4,6 +4,7 @@ import 'package:dj_projektarbeit/logic/rules/_eingabe.dart';
 import 'package:dj_projektarbeit/logic/rules/_rule.dart';
 
 class MetadataRule extends Rule {
+  String selectedField = 'size';
   @override
   final String type;
 
@@ -15,10 +16,8 @@ class MetadataRule extends Rule {
         Eingabe(
           label: 'Metadatenfeld',
           valueType: String,
-          value: () => type,
-          setValue: (value) {
-            // No setter needed for metadata field
-          },
+          value: () => selectedField,
+          setValue: (val) => selectedField = val,
         ),
       ];
 
@@ -33,21 +32,30 @@ class MetadataRule extends Rule {
 
   @override
   String? apply(File input) {
-    final metadata = input.statSync().size;
-    final sizeAsString = metadata.toString();
-    return sizeAsString;
+    final stat = input.statSync();
+    switch (selectedField) {
+      case 'size':
+        return stat.size.toString();
+      case 'lastModified':
+        return stat.modified.toString();
+      case 'created':
+        return stat.changed.toString();
+      default:
+        return null;
+    }
   }
 
   @override
   Map<String, dynamic> toJson() => {
         'type': type,
         'excelField': excelField,
+        'selectedField': selectedField,
       };
 
   static MetadataRule fromJson(Map<String, dynamic> json) {
     return MetadataRule._(
       type: json['type'],
       excelField: json['excelField'],
-    );
+    )..selectedField = json['selectedField'] ?? 'size';
   }
 }
