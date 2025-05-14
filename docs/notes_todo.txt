@@ -1,4 +1,4 @@
-Ordner relativ zum Ursprungsordner finden, nicht von Festplatte
+Ordner relativ zum Ursprungsordner finden, nicht von Laufwerk
 
 beim editieren Regeltyp und vorherige Eingaben beibehalten
 

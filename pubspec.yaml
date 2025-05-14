@@ -7,7 +7,6 @@ environment:
   sdk: ^3.6.0
 
 dependencies:
-  dropdown_search: ^5.0.6
   excel: ^2.0.0
   file_picker: ^10.0.0
   file_selector: ^1.0.2
