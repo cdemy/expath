@@ -24,18 +24,18 @@ class PreviewTable extends StatelessWidget {
         DataColumn(label: Text('An/Abwählen')), // Checkbox-Spalte
         ...rules.map((rule) => DataColumn(label: Text(rule.excelField))),
       ],
-      rows: allFiles.map((filePath) {
-        final isChecked = selectedRows[filePath] ?? false;
+      rows: allFiles.map((file) {
+        final isChecked = selectedRows[file.path] ?? false;
         return DataRow(
           cells: [
             DataCell(
               Checkbox(
                 value: isChecked,
-                onChanged: (val) => toggleSelection(filePath.path, val),
+                onChanged: (val) => toggleSelection(file.path, val),
               ),
             ),
             ...rules.map((rule) {
-              final result = rule.apply(filePath) ?? "";
+              final result = rule.apply(file) ?? "";
               return DataCell(Text(result));
             }),
           ],

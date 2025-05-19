@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dj_projektarbeit/logic/rules/simple_regex_rule.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -5,7 +7,7 @@ void main() {
   test('SimpleRegexRule findet korrekten Treffer im Pfad', () {
     final rule = SimpleRegexRule();
     rule.regex = 'Patent_(\\d+)';
-    final path = 'C:\\Daten\\Patent_12345\\Akte.pdf';
+    final path = File('C:\\Daten\\Patent_12345\\Akte.pdf');
 
     final result = rule.apply(path);
 
@@ -15,7 +17,7 @@ void main() {
   test('SimpleRegexRule gibt null zurück, wenn kein Treffer', () {
     final rule = SimpleRegexRule();
     rule.regex = 'Marke_(\\d+)';
-    final path = 'C:\\Daten\\Patent_12345\\Akte.pdf';
+    final path = File('C:\\Daten\\Patent_12345\\Akte.pdf');
 
     final result = rule.apply(path);
 
