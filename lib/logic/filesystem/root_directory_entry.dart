@@ -1,8 +1,10 @@
+import 'dart:io';
+
 class RootDirectoryEntry {
   final String path;
-  final List<String> filePaths;
+  final List<File> files;
 
-  RootDirectoryEntry(this.path, this.filePaths);
+  RootDirectoryEntry(this.path, this.files);
 
-  int get fileCount => filePaths.length;
+  int get fileCount => files.length;
 }

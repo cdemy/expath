@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dj_projektarbeit/gui/preview_screen/_widgets/preview_table.dart';
 import 'package:dj_projektarbeit/logic/excel/excel_exporter.dart';
 import 'package:dj_projektarbeit/logic/filesystem/root_directory_entry.dart';
@@ -22,8 +24,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
   final ScrollController _verticalController = ScrollController();
   final ScrollController _horizontalController = ScrollController();
 
-  late List<String> allFiles;
+  late List<File> allFiles;
   late Map<String, bool> selectedRows;
+  late Map<String, File> fileIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -84,23 +87,32 @@ class _PreviewScreenState extends State<PreviewScreen> {
   @override
   void initState() {
     super.initState();
-    allFiles = widget.directories.expand((dir) => dir.filePaths).toList();
-    selectedRows = {for (var file in allFiles) file: true};
+    allFiles = widget.directories.expand((dir) => dir.files).toList();
+    selectedRows = {for (var file in allFiles) file.path: true};
+    fileIndex = {for (var file in allFiles) file.path: file};
   }
 
   void _generateExcel() async {
-    final selectedPaths = allFiles.where((path) => selectedRows[path] == true).toList();
-
-    if (selectedPaths.isEmpty) {
+    final selectedFiles =
+        selectedRows.entries.where((entry) => entry.value).map((entry) => fileIndex[entry.key]!).toList();
+    if (selectedFiles.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Keine Zeilen ausgewählt für Export.")),
+        SnackBar(content: Text('Keine Zeilen ausgewählt für Export.')),
       );
       return;
     }
+    // final selectedPaths = allFiles.where((path) => selectedRows[file.path] == true).toList();
+
+    // if (selectedPaths.isEmpty) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text("Keine Zeilen ausgewählt für Export.")),
+    //   );
+    //   return;
+    // }
 
     try {
       await ExcelExporter.export(
-        directories: [RootDirectoryEntry("Selektierte Dateien", selectedPaths)],
+        directories: [RootDirectoryEntry("Selektierte Dateien", selectedFiles)],
         rules: widget.rules,
       );
       ScaffoldMessenger.of(context).showSnackBar(

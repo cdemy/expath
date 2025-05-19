@@ -51,6 +51,7 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ruleTypeLabels = RuleType.values.map((e) => e.label).toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.existingRule == null ? 'Neue Regel erstellen' : 'Regel bearbeiten'),
@@ -64,36 +65,43 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DropdownButtonFormField<RuleType>(
-              decoration: InputDecoration(labelText: 'Regeltyp auswählen'),
-              value: selectedRuleType,
-              items: RuleType.values.map((type) {
-                return DropdownMenuItem(
-                  value: type,
-                  child: Text(type.label),
-                );
-              }).toList(),
-              onChanged: (value) {
+            // ------- Rule type selection TextField with Autocomplete -----------------
+
+            Autocomplete<String>(
+              initialValue: TextEditingValue(text: selectedRuleType?.label ?? ''),
+              optionsBuilder: (TextEditingValue textEditingValue) {
+                if (textEditingValue.text.isEmpty) return ruleTypeLabels;
+                return ruleTypeLabels
+                    .where((label) => label.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+              },
+              onSelected: (String selection) {
+                final matchedType = RuleType.values.firstWhere((type) => type.label == selection);
                 setState(() {
-                  selectedRuleType = value;
-                  // Switching to a new rule type
+                  selectedRuleType = matchedType;
                   _eingabenControllers.clear();
-                  selectedRule = null;
-                  ctrlSpalte.clear();
-                  if (selectedRuleType != null) {
-                    selectedRule = value!.constructor();
-                    ctrlSpalte.text = selectedRule!.excelField;
-                    for (var eingabe in selectedRule!.eingaben) {
-                      _eingabenControllers.add(TitledTextEditingController(
-                        label: eingabe.label,
-                        controller: TextEditingController(text: eingabe.value()),
-                        valueType: eingabe.valueType,
-                      ));
-                    }
+                  selectedRule = matchedType.constructor();
+                  ctrlSpalte.text = selectedRule!.excelField;
+                  for (var eingabe in selectedRule!.eingaben) {
+                    _eingabenControllers.add(TitledTextEditingController(
+                      label: eingabe.label,
+                      controller: TextEditingController(text: eingabe.value()),
+                      valueType: eingabe.valueType,
+                    ));
                   }
                 });
               },
+              fieldViewBuilder: (context, controller, focusNode, onEditingComplete) {
+                return TextField(
+                  controller: controller,
+                  focusNode: focusNode,
+                  decoration: InputDecoration(
+                    labelText: 'Regeltyp (tippen oder auswählen)',
+                    border: OutlineInputBorder(),
+                  ),
+                );
+              },
             ),
+
             SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
