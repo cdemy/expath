@@ -1,4 +1,5 @@
 import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/conditional_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/created_at_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/file_size_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/path_segment_rule.dart';
@@ -53,6 +54,12 @@ enum RuleType {
     type: 'createdAt',
     constructor: CreatedAtRule.new,
     fromJson: CreatedAtRule.fromJson,
+  ),
+  conditional(
+    label: 'Fallunterscheidung',
+    type: 'conditional',
+    constructor: ConditionalRule.empty,
+    fromJson: ConditionalRule.fromJson,
   );
 
   const RuleType({

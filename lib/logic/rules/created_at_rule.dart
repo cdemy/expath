@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dj_projektarbeit/logic/rules/_eingabe.dart';
 import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:intl/intl.dart';
 
 class CreatedAtRule extends Rule {
   @override
@@ -10,15 +11,31 @@ class CreatedAtRule extends Rule {
   @override
   String excelField;
 
-  CreatedAtRule({this.excelField = 'Erstellungsdatum'});
+  String format;
+
+  CreatedAtRule({
+    this.excelField = 'Erstellungsdatum',
+    this.format = 'yyyy-MM-dd HH:mm:ss',
+  });
 
   @override
-  List<Eingabe> get eingaben => [];
+  List<Eingabe> get eingaben => [
+        Eingabe(
+          label: 'Datumsformat',
+          valueType: String,
+          value: () => format,
+          setValue: (value) {
+            format = value;
+          },
+          hint: 'z.B. dd.MM.yyyy oder yyyyMMdd',
+        ),
+      ];
 
   @override
   String? apply(File file) {
     try {
-      return file.lastModifiedSync().toString();
+      final date = file.lastModifiedSync();
+      return DateFormat(format).format(date);
     } catch (e) {
       return null;
     }
@@ -28,11 +45,13 @@ class CreatedAtRule extends Rule {
   Map<String, dynamic> toJson() => {
         'type': type,
         'excelField': excelField,
+        'format': format,
       };
 
   static CreatedAtRule fromJson(Map<String, dynamic> json) {
     return CreatedAtRule(
       excelField: json['excelField'],
+      format: json['format'] ?? 'yyyy-MM-dd HH:mm:ss',
     );
   }
 }
