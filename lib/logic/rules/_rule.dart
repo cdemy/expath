@@ -2,75 +2,78 @@ import 'dart:io';
 
 import 'package:dj_projektarbeit/logic/rules/_eingabe.dart';
 import 'package:dj_projektarbeit/logic/rules/_rule_type.dart';
+import 'package:dj_projektarbeit/logic/rules/concatenation_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/simple_regex_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/path_segment_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/reverse_path_segment.dart';
+import 'package:dj_projektarbeit/logic/rules/file_size_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/created_at_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/conditional_rule.dart';
 
 /// -----------------------------
 /// Abstract Rule
 /// -----------------------------
 
 abstract class Rule {
-  String get type;
-  String get excelField;
-  set excelField(String value);
+  // Rule? stackedRule;
+  // String get excelField;
+  // set excelField(String value);
   String? apply(File input);
-  Map<String, dynamic> toJson();
+  String? applyString(String? string);
 
-  RuleType get ruleType => RuleType.fromType(type);
+  Map<String, dynamic> toJson();
+  RuleType get ruleType;
+
   List<Eingabe> get eingaben;
+
+  static Rule fromJson(Map<String, dynamic> json) {
+    final ruleType = RuleType.fromType(json['type']);
+    switch (ruleType) {
+      case RuleType.concatenation:
+        return ConcatenationRule.fromJson(json);
+      case RuleType.fileName:
+        return SimpleRegexRule.fromJson(json);
+      case RuleType.parentDirectory:
+        return SimpleRegexRule.fromJson(json);
+      case RuleType.pathSegment:
+        return PathSegmentRule.fromJson(json);
+      case RuleType.reversePathSegment:
+        return ReversePathSegmentRule.fromJson(json);
+      case RuleType.regEx:
+        return SimpleRegexRule.fromJson(json);
+      case RuleType.metadata:
+        return FileSizeRule.fromJson(json);
+      case RuleType.createdAt:
+        return CreatedAtRule.fromJson(json);
+      case RuleType.conditional:
+        return ConditionalRule.fromJson(json);
+    }
+  }
 }
 
-/// -----------------------------
-/// RuleFactory
-/// -----------------------------
+class RuleStack {
+  List<Rule> rules;
+  // String get type;
+  String? excelField;
 
-// class RuleFactory {
-  // static Rule fromEingaben(RuleType type, List<Eingabewert> eingaben) {
-  //   switch (type) {
-  //     case RuleType.fileName:
-  //       return SimpleRegexRule(
-  //         type: type,
-  //         name: type.label,
-  //         excelField: type.defaultExcelField!,
-  //         regex: type.defaultRegex!,
-  //       );
-  //     case RuleType.parentDirectory:
-  //       return SimpleRegexRule(
-  //         type: type,
-  //         name: type.label,
-  //         excelField: type.defaultExcelField!,
-  //         regex: type.defaultRegex!,
-  //       );
-  //     case RuleType.pathSegment:
-  //       final index = int.parse(eingaben[0].value);
-  //       return PathSegmentRule(
-  //         // name: 'Ordner an Position $index extrahieren',
-  //         name: eingaben[2].value,
-  //         excelField: eingaben[1].value,
-  //         index: index,
-  //       );
-  //     case RuleType.reversePathSegment:
-  //       return ReversePathSegmentRule(
-  //         // name: 'Ordner von hinten auswählen',
-  //         name: eingaben[2].value,
-  //         excelField: eingaben[1].value,
-  //         reverseIndex: int.parse(eingaben[0].value),
-  //       );
-  //     case RuleType.regEx:
-  //       return SimpleRegexRule(
-  //         type: type,
-  //         name: eingaben[2].value,
-  //         excelField: eingaben[1].value,
-  //         regex: eingaben[0].value,
-  //       );
-  //   }
-  // }
+  RuleStack({
+    this.rules = const [],
+    this.excelField,
+  });
 
-//   static Rule fromJson(Map<String, dynamic> json) {
-//     final type = json['type'] as String;
-//     final ruleType = RuleType.values.firstWhere(
-//       (rt) => rt.type == type,
-//       orElse: () => throw Exception('Unbekannter Regeltyp: $type'),
-//     );
+  String? apply(File input) {
+    if (rules.isEmpty) return null;
+    var result = rules.first.apply(input);
+    for (var i = 1; i < rules.length; i++) {
+      result = rules[i].applyString(result);
+    }
+    return result;
+  }
 
-//     return ruleType.fromJson(json);
-//   }
-// }
+  Map<String, dynamic> toJson() => {'rules': rules.map((r) => r.toJson()), 'excelField': excelField};
+
+  static RuleStack fromJson(Map<String, dynamic> json) => RuleStack(
+        excelField: json['excelField'],
+        rules: (json['rules'] as List).map((e) => Rule.fromJson(Map<String, dynamic>.from(e))).toList(),
+      );
+}

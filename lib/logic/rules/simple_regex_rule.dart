@@ -2,56 +2,53 @@ import 'dart:io';
 
 import 'package:dj_projektarbeit/logic/rules/_eingabe.dart';
 import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/_rule_type.dart';
 
 class SimpleRegexRule extends Rule {
-  @override
-  final String type;
-
-  @override
-  String excelField;
+  final RuleType ruleType;
 
   String regex;
 
   SimpleRegexRule()
-      : type = 'regEx',
-        excelField = 'Spalte',
+      : ruleType = RuleType.regEx,
         regex = '';
 
   SimpleRegexRule.fileName()
-      : type = 'fileName',
-        excelField = 'Dateiname',
+      : ruleType = RuleType.fileName,
         regex = r'[^\\/]+$';
 
   SimpleRegexRule.parentDirectory()
-      : type = 'parentDirectory',
-        excelField = 'Ordnerpfad',
+      : ruleType = RuleType.parentDirectory,
         regex = r'^.*(?=\\[^\\]+$)';
 
   SimpleRegexRule._({
-    required this.type,
-    required this.excelField,
+    required this.ruleType,
     required this.regex,
   });
 
   @override
   String? apply(File input) {
     final path = input.path;
+    return applyString(path);
+  }
+
+  @override
+  String? applyString(String? string) {
+    if (string == null) return null;
     final regExp = RegExp(regex, caseSensitive: false, multiLine: true);
-    final match = regExp.firstMatch(path);
+    final match = regExp.firstMatch(string);
     return match?.groupCount == 0 ? match?.group(0) : match?.group(1);
   }
 
   @override
   Map<String, dynamic> toJson() => {
-        'type': type,
-        'excelField': excelField,
+        'type': ruleType.type,
         'regex': regex,
       };
 
   static SimpleRegexRule fromJson(Map<String, dynamic> json) {
     return SimpleRegexRule._(
-      type: json['type'],
-      excelField: json['excelField'],
+      ruleType: RuleType.fromType(json['type']),
       regex: json['regex'],
     );
   }

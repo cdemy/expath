@@ -20,7 +20,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   List<RootDirectoryEntry> directories = [];
-  List<Rule> rules = [];
+  List<RuleStack> ruleStacks = [];
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +83,7 @@ class _MainScreenState extends State<MainScreen> {
                 SizedBox(width: 8),
                 // "Load rules" button
                 ElevatedButton(
-                  onPressed: _loadRules,
+                  onPressed: _loadRuleStacks,
                   child: Text("Regelsatz laden"),
                 ),
               ],
@@ -92,11 +92,11 @@ class _MainScreenState extends State<MainScreen> {
 
             // --- Rules list --------------------------------------------------
             Expanded(
-              child: RulesList(
-                rules: rules,
-                moveRule: _moveRule,
-                editRule: _editRule,
-                removeRule: _removeRule,
+              child: RuleStacksList(
+                ruleStacks: ruleStacks,
+                moveRuleStack: _moveRuleStack,
+                editRuleStack: _editRuleStack,
+                removeRuleStack: _removeRuleStack,
               ),
             ),
           ],
@@ -106,13 +106,13 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _addRule() async {
-    final rule = await Navigator.push<Rule>(
+    final ruleStack = await Navigator.push<RuleStack>(
       context,
-      MaterialPageRoute(builder: (context) => RuleEditorScreen()),
+      MaterialPageRoute(builder: (context) => RuleStackEditorScreen()),
     );
-    if (rule != null) {
+    if (ruleStack != null) {
       setState(() {
-        rules.add(rule);
+        ruleStacks.add(ruleStack);
       });
     }
   }
@@ -135,7 +135,7 @@ class _MainScreenState extends State<MainScreen> {
     if (confirmed == true) {
       setState(() {
         directories.clear();
-        rules.clear();
+        ruleStacks.clear();
       });
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
@@ -144,42 +144,42 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  void _editRule(Rule rule) async {
-    final editedRule = await Navigator.push<Rule>(
+  void _editRuleStack(RuleStack ruleStack) async {
+    final editedRuleStack = await Navigator.push<RuleStack>(
       context,
       MaterialPageRoute(
-        builder: (context) => RuleEditorScreen(existingRule: rule),
+        builder: (context) => RuleStackEditorScreen(existingRuleStack: ruleStack),
       ),
     );
 
-    if (editedRule != null) {
+    if (editedRuleStack != null) {
       setState(() {
-        rules[rules.indexOf(rule)] = editedRule;
+        ruleStacks[ruleStacks.indexOf(ruleStack)] = editedRuleStack;
       });
     }
   }
 
-  void _loadRules() async {
+  void _loadRuleStacks() async {
     final result = await FilePicker.platform.pickFiles();
     if (result != null && result.files.single.path != null) {
-      final loadedRules = await SaveLoad.loadRulesFromJson(result.files.single.path!);
+      final loadedRuleStacks = await SaveLoad.loadRuleStacksFromJson(result.files.single.path!);
       setState(() {
-        rules = loadedRules;
+        ruleStacks = loadedRuleStacks;
       });
       // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Regeln geladen')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Regel-Sets geladen')));
     }
   }
 
-  void _moveRule(int oldIndex, int newIndex) {
+  void _moveRuleStack(int oldIndex, int newIndex) {
     setState(() {
-      final rule = rules.removeAt(oldIndex);
-      rules.insert(newIndex, rule);
+      final ruleStack = ruleStacks.removeAt(oldIndex);
+      ruleStacks.insert(newIndex, ruleStack);
     });
   }
 
   void _preview() {
-    if (directories.isEmpty || rules.isEmpty) {
+    if (directories.isEmpty || ruleStacks.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Bitte Verzeichnisse und Regeln anlegen.')));
       return;
     }
@@ -189,7 +189,7 @@ class _MainScreenState extends State<MainScreen> {
       MaterialPageRoute(
         builder: (context) => PreviewScreen(
           directories: directories,
-          rules: rules,
+          ruleStacks: ruleStacks,
         ),
       ),
     );
@@ -201,9 +201,9 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void _removeRule(Rule rule) {
+  void _removeRuleStack(RuleStack ruleStack) {
     setState(() {
-      rules.remove(rule);
+      ruleStacks.remove(ruleStack);
     });
   }
 
@@ -213,9 +213,9 @@ class _MainScreenState extends State<MainScreen> {
       fileName: 'rules.json',
     );
     if (path != null) {
-      await SaveLoad.saveRulesToJson(rules, path);
+      await SaveLoad.saveRuleStacksToJson(ruleStacks, path);
       // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Regeln gespeichert')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Regel-Sets gespeichert')));
     }
   }
 

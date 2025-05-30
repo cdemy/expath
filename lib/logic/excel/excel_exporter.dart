@@ -7,9 +7,9 @@ import '../rules/_rule.dart';
 class ExcelExporter {
   static Future<void> export({
     required List<RootDirectoryEntry> directories,
-    required List<Rule> rules,
+    required List<RuleStack> rulesStacks,
   }) async {
-    if (directories.isEmpty || rules.isEmpty) {
+    if (directories.isEmpty || rulesStacks.isEmpty) {
       throw Exception("Keine Daten oder Regeln vorhanden.");
     }
 
@@ -25,7 +25,7 @@ class ExcelExporter {
     final Sheet sheet = excel['Sheet1'];
 
     // Header
-    final headers = [...rules.map((r) => r.excelField)];
+    final headers = [...rulesStacks.map((r) => r.excelField)];
     for (int col = 0; col < headers.length; col++) {
       sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0)).value = headers[col];
     }
@@ -33,9 +33,9 @@ class ExcelExporter {
     // Input values
     final allFiles = directories.expand((dir) => dir.files).toList();
     for (int i = 0; i < allFiles.length; i++) {
-      for (int j = 0; j < rules.length; j++) {
-        final rule = rules[j];
-        final result = rule.apply(allFiles[i]) ?? '';
+      for (int j = 0; j < rulesStacks.length; j++) {
+        final ruleStack = rulesStacks[j];
+        final result = ruleStack.apply(allFiles[i]) ?? '';
         sheet.cell(CellIndex.indexByColumnRow(columnIndex: j, rowIndex: i + 1)).value = result;
       }
     }

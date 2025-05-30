@@ -1,4 +1,5 @@
 import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/concatenation_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/conditional_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/created_at_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/file_size_rule.dart';
@@ -11,17 +12,26 @@ import 'package:dj_projektarbeit/logic/rules/simple_regex_rule.dart';
 /// -----------------------------
 
 enum RuleType {
+  concatenation(
+    type: 'concatenation',
+    label: 'Verketten',
+    constructor: ConcatenationRule.new,
+    fromJson: ConcatenationRule.fromJson,
+    onlyFirstPosition: false,
+  ),
   fileName(
     type: 'fileName',
     label: 'Dateiname extrahieren',
     constructor: SimpleRegexRule.fileName,
     fromJson: SimpleRegexRule.fromJson,
+    onlyFirstPosition: true,
   ),
   parentDirectory(
     type: 'parentDirectory',
     label: 'Ordnerpfad extrahieren',
     constructor: SimpleRegexRule.parentDirectory,
     fromJson: SimpleRegexRule.fromJson,
+    onlyFirstPosition: true,
   ),
   pathSegment(
     type: 'pathSegment',
@@ -29,6 +39,7 @@ enum RuleType {
     hint: '0 = Partition, 1 = erster Ordner, 2 = zweiter Ordner, ...',
     constructor: PathSegmentRule.new,
     fromJson: PathSegmentRule.fromJson,
+    onlyFirstPosition: true,
   ),
   reversePathSegment(
     label: 'Ordner invertiert extrahieren',
@@ -36,30 +47,35 @@ enum RuleType {
     type: 'reversePathSegment',
     constructor: ReversePathSegmentRule.new,
     fromJson: ReversePathSegmentRule.fromJson,
+    onlyFirstPosition: true,
   ),
   regEx(
     label: 'Benutzerdefinierter Regex',
     type: 'regEx',
     constructor: SimpleRegexRule.new,
     fromJson: SimpleRegexRule.fromJson,
+    onlyFirstPosition: false,
   ),
   metadata(
     label: 'Dateigröße',
     type: 'fileSize',
     constructor: FileSizeRule.new,
     fromJson: FileSizeRule.fromJson,
+    onlyFirstPosition: true,
   ),
   createdAt(
     label: 'Erstellungsdatum',
     type: 'createdAt',
     constructor: CreatedAtRule.new,
     fromJson: CreatedAtRule.fromJson,
+    onlyFirstPosition: true,
   ),
   conditional(
     label: 'Fallunterscheidung',
     type: 'conditional',
     constructor: ConditionalRule.empty,
     fromJson: ConditionalRule.fromJson,
+    onlyFirstPosition: false,
   );
 
   const RuleType({
@@ -67,6 +83,7 @@ enum RuleType {
     required this.label,
     required this.constructor,
     required this.fromJson,
+    required this.onlyFirstPosition,
     this.hint,
   });
 
@@ -75,6 +92,7 @@ enum RuleType {
   final String? hint;
   final Rule Function() constructor;
   final Rule Function(Map<String, dynamic>) fromJson;
+  final bool onlyFirstPosition;
 
   static RuleType fromType(String type) {
     return RuleType.values.firstWhere(

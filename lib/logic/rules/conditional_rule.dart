@@ -2,29 +2,22 @@ import 'dart:io';
 
 import 'package:dj_projektarbeit/logic/rules/_eingabe.dart';
 import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/_rule_type.dart';
 
 class ConditionalRule extends Rule {
   String keyword;
   String valueIfMatch;
   String valueIfNoMatch;
-  @override
-  final String type;
-  @override
-  String excelField;
 
   ConditionalRule.empty()
       : keyword = '',
         valueIfMatch = '',
-        valueIfNoMatch = '',
-        type = 'conditional',
-        excelField = 'Conditional';
+        valueIfNoMatch = '';
 
   ConditionalRule({
     required this.keyword,
     required this.valueIfMatch,
     required this.valueIfNoMatch,
-    this.type = 'conditional',
-    this.excelField = 'Conditional',
   });
 
   @override
@@ -56,15 +49,21 @@ class ConditionalRule extends Rule {
       ];
 
   @override
-  String apply(File file) {
+  String? apply(File file) {
     final path = file.path;
-    return path.contains(keyword) ? valueIfMatch : valueIfNoMatch;
+    return applyString(path);
+  }
+
+  @override
+  String? applyString(String? string) {
+    if (string == null) return null;
+    return string.contains(keyword) ? valueIfMatch : valueIfNoMatch;
   }
 
   @override
   Map<String, dynamic> toJson() {
     return {
-      'type': 'conditional',
+      'type': ruleType.type,
       'keyword': keyword,
       'valueIfMatch': valueIfMatch,
       'valueIfNoMatch': valueIfNoMatch,
@@ -78,4 +77,6 @@ class ConditionalRule extends Rule {
       valueIfNoMatch: json['valueIfNoMatch'] as String,
     );
   }
+
+  RuleType get ruleType => RuleType.conditional;
 }

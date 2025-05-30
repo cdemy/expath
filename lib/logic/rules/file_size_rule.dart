@@ -2,15 +2,10 @@ import 'dart:io';
 
 import 'package:dj_projektarbeit/logic/rules/_eingabe.dart';
 import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/_rule_type.dart';
 
 class FileSizeRule extends Rule {
-  @override
-  final String type = 'fileSize';
-
-  @override
-  String excelField;
-
-  FileSizeRule({this.excelField = 'Dateigröße (Bytes)'});
+  FileSizeRule();
 
   @override
   List<Eingabe> get eingaben => [];
@@ -25,14 +20,19 @@ class FileSizeRule extends Rule {
   }
 
   @override
+  String? applyString(String? string) {
+    throw Exception('Cannot be applied to a String');
+  }
+
+  @override
   Map<String, dynamic> toJson() => {
-        'type': type,
-        'excelField': excelField,
+        'type': ruleType.type,
       };
 
   static FileSizeRule fromJson(Map<String, dynamic> json) {
-    return FileSizeRule(
-      excelField: json['excelField'],
-    );
+    return FileSizeRule();
   }
+
+  @override
+  RuleType get ruleType => RuleType.metadata;
 }

@@ -2,24 +2,16 @@ import 'dart:io';
 
 import 'package:dj_projektarbeit/logic/rules/_eingabe.dart';
 import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/_rule_type.dart';
 
 class ReversePathSegmentRule extends Rule {
-  @override
-  final String type;
-  @override
-  String excelField;
   int reverseIndex;
 
   ReversePathSegmentRule._({
-    required this.type,
-    required this.excelField,
     required this.reverseIndex,
   });
 
-  ReversePathSegmentRule()
-      : type = 'reversePathSegment',
-        excelField = 'OrdnerB',
-        reverseIndex = 0;
+  ReversePathSegmentRule() : reverseIndex = 0;
 
   @override
   String? apply(File input) {
@@ -31,16 +23,18 @@ class ReversePathSegmentRule extends Rule {
   }
 
   @override
+  String? applyString(String? string) {
+    throw Exception('Cannot be applied to a String');
+  }
+
+  @override
   Map<String, dynamic> toJson() => {
-        'type': type,
-        'excelField': excelField,
+        'type': ruleType.type,
         'reverseIndex': reverseIndex,
       };
 
   static ReversePathSegmentRule fromJson(Map<String, dynamic> json) {
     return ReversePathSegmentRule._(
-      type: json['type'],
-      excelField: json['excelField'],
       reverseIndex: json['reverseIndex'],
     );
   }
@@ -59,4 +53,7 @@ class ReversePathSegmentRule extends Rule {
           },
         ),
       ];
+
+  @override
+  RuleType get ruleType => RuleType.reversePathSegment;
 }

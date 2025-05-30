@@ -2,19 +2,13 @@ import 'dart:io';
 
 import 'package:dj_projektarbeit/logic/rules/_eingabe.dart';
 import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/_rule_type.dart';
 import 'package:intl/intl.dart';
 
 class CreatedAtRule extends Rule {
-  @override
-  final String type = 'createdAt';
-
-  @override
-  String excelField;
-
   String format;
 
   CreatedAtRule({
-    this.excelField = 'Erstellungsdatum',
     this.format = 'yyyy-MM-dd HH:mm:ss',
   });
 
@@ -42,16 +36,22 @@ class CreatedAtRule extends Rule {
   }
 
   @override
+  String? applyString(String? string) {
+    throw Exception('Cannot be applied to a String');
+  }
+
+  @override
   Map<String, dynamic> toJson() => {
-        'type': type,
-        'excelField': excelField,
+        'type': ruleType.type,
         'format': format,
       };
 
   static CreatedAtRule fromJson(Map<String, dynamic> json) {
     return CreatedAtRule(
-      excelField: json['excelField'],
       format: json['format'] ?? 'yyyy-MM-dd HH:mm:ss',
     );
   }
+
+  @override
+  RuleType get ruleType => RuleType.createdAt;
 }

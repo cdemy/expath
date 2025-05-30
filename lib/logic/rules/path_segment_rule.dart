@@ -2,12 +2,9 @@ import 'dart:io';
 
 import 'package:dj_projektarbeit/logic/rules/_eingabe.dart';
 import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/_rule_type.dart';
 
 class PathSegmentRule extends Rule {
-  @override
-  final String type;
-  @override
-  String excelField;
   int index;
 
   @override
@@ -26,15 +23,10 @@ class PathSegmentRule extends Rule {
       ];
 
   PathSegmentRule._({
-    required this.type,
-    required this.excelField,
     required this.index,
   });
 
-  PathSegmentRule()
-      : type = 'pathSegment',
-        excelField = 'Ordner',
-        index = 0;
+  PathSegmentRule() : index = 0;
 
   @override
   String? apply(File input) {
@@ -45,17 +37,21 @@ class PathSegmentRule extends Rule {
   }
 
   @override
+  String? applyString(String? string) {
+    throw Exception('Cannot be applied to a String');
+  }
+
+  @override
   Map<String, dynamic> toJson() => {
-        'type': type,
-        'excelField': excelField,
+        'type': ruleType.type,
         'index': index,
       };
 
   static PathSegmentRule fromJson(Map<String, dynamic> json) {
     return PathSegmentRule._(
-      type: json['type'],
-      excelField: json['excelField'],
       index: json['index'],
     );
   }
+
+  RuleType get ruleType => RuleType.pathSegment;
 }
