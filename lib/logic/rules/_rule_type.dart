@@ -2,7 +2,9 @@ import 'package:dj_projektarbeit/logic/rules/_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/concatenation_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/conditional_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/created_at_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/file_path_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/file_size_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/file_type_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/path_segment_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/reverse_path_segment.dart';
 import 'package:dj_projektarbeit/logic/rules/simple_regex_rule.dart';
@@ -12,11 +14,25 @@ import 'package:dj_projektarbeit/logic/rules/simple_regex_rule.dart';
 /// -----------------------------
 
 enum RuleType {
+  regEx(
+    label: 'Benutzerdefinierter Regex',
+    type: 'regEx',
+    constructor: SimpleRegexRule.new,
+    fromJson: SimpleRegexRule.fromJson,
+    onlyFirstPosition: false,
+  ),
   concatenation(
     type: 'concatenation',
     label: 'Verketten',
     constructor: ConcatenationRule.new,
     fromJson: ConcatenationRule.fromJson,
+    onlyFirstPosition: false,
+  ),
+  conditional(
+    label: 'Fallunterscheidung',
+    type: 'conditional',
+    constructor: ConditionalRule.empty,
+    fromJson: ConditionalRule.fromJson,
     onlyFirstPosition: false,
   ),
   fileName(
@@ -49,14 +65,7 @@ enum RuleType {
     fromJson: ReversePathSegmentRule.fromJson,
     onlyFirstPosition: true,
   ),
-  regEx(
-    label: 'Benutzerdefinierter Regex',
-    type: 'regEx',
-    constructor: SimpleRegexRule.new,
-    fromJson: SimpleRegexRule.fromJson,
-    onlyFirstPosition: false,
-  ),
-  metadata(
+  filesize(
     label: 'Dateigröße',
     type: 'fileSize',
     constructor: FileSizeRule.new,
@@ -70,12 +79,19 @@ enum RuleType {
     fromJson: CreatedAtRule.fromJson,
     onlyFirstPosition: true,
   ),
-  conditional(
-    label: 'Fallunterscheidung',
-    type: 'conditional',
-    constructor: ConditionalRule.empty,
-    fromJson: ConditionalRule.fromJson,
-    onlyFirstPosition: false,
+  filepath(
+    label: 'Dateipfad',
+    type: 'filepath',
+    constructor: FilePathRule.new,
+    fromJson: FilePathRule.fromJson,
+    onlyFirstPosition: true,
+  ),
+  filetype(
+    label: 'Dateityp',
+    type: 'filetype',
+    constructor: FileTypeRule.new,
+    fromJson: FileTypeRule.fromJson,
+    onlyFirstPosition: true,
   );
 
   const RuleType({

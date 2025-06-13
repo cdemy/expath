@@ -5,7 +5,7 @@ import 'package:dj_projektarbeit/gui/rule_editor_screen/rule_editor_screen.dart'
 import 'package:dj_projektarbeit/logic/filesystem/save_load.dart';
 import 'package:dj_projektarbeit/logic/filesystem/pathfinder.dart';
 import 'package:dj_projektarbeit/logic/filesystem/root_directory_entry.dart';
-import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/rule_stack.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';

@@ -1,60 +1,68 @@
+import 'package:dj_projektarbeit/logic/rules/rule_stack.dart';
 import 'package:flutter/material.dart';
 import '../../logic/rules/_rule.dart';
 import '../../logic/rules/_rule_type.dart';
 
-class RuleEditorScreen extends StatefulWidget {
-  final Rule? existingRule;
+class RuleStackEditorScreen extends StatefulWidget {
+  // final Rule? existingRule;
+  final RuleStack? existingRuleStack;
 
-  const RuleEditorScreen({super.key, this.existingRule});
+  const RuleStackEditorScreen(
+      {super.key,
+      // this.existingRule,
+      this.existingRuleStack});
 
   @override
-  State<RuleEditorScreen> createState() => _RuleEditorScreenState();
+  State<RuleStackEditorScreen> createState() => _RuleStackEditorScreenState();
 }
 
-class _RuleEditorScreenState extends State<RuleEditorScreen> {
+class _RuleStackEditorScreenState extends State<RuleStackEditorScreen> {
   RuleType? selectedRuleType;
+  RuleStack? selectedRuleStack;
   Rule? selectedRule;
   final ctrlSpalte = TextEditingController();
-  final List<TitledTextEditingController> _eingabenControllers = [];
+  final List<_RuleEditingBundle> _ruleBundles = [];
 
   @override
   void initState() {
     super.initState();
-
-    if (widget.existingRule != null) {
-      selectedRule = widget.existingRule!;
-      for (final eingabe in selectedRule!.eingaben) {
-        _eingabenControllers.add(TitledTextEditingController(
-          label: eingabe.label,
-          controller: TextEditingController(text: eingabe.value()),
-          valueType: eingabe.valueType,
-        ));
+    if (widget.existingRuleStack != null) {
+      selectedRuleStack = widget.existingRuleStack!;
+      if (selectedRuleStack!.excelField != null) {
+        ctrlSpalte.text = selectedRuleStack!.excelField!;
       }
+      for (final rule in selectedRuleStack!.rules) {
+        _ruleBundles.add(_RuleEditingBundle.fromRule(rule));
+      }
+    } else {
+      _ruleBundles.add(_RuleEditingBundle.empty());
     }
   }
 
   void _saveRule() {
-    if (selectedRule == null) return;
-    selectedRule!.excelField = ctrlSpalte.text.trim();
-    for (final ctrl in _eingabenControllers) {
-      final value = ctrl.controller.text.trim();
-      if (value.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Bitte alle Felder ausfüllen')),
-        );
-        return;
-      }
-      selectedRule!.eingaben.firstWhere((e) => e.label == ctrl.label).setValue(value);
-    }
-    Navigator.pop(context, selectedRule);
+    selectedRuleStack ??= RuleStack(rules: [], excelField: ctrlSpalte.text.trim());
+    selectedRuleStack!.excelField = ctrlSpalte.text.trim();
+    selectedRuleStack!.rules = _ruleBundles.map((bundle) => bundle.toRule()).toList();
+    Navigator.pop(context, selectedRuleStack);
+  }
+
+  void _addSubRule() {
+    setState(() {
+      _ruleBundles.add(_RuleEditingBundle.empty());
+    });
+  }
+
+  void _removeSubRule(int index) {
+    setState(() {
+      _ruleBundles.removeAt(index);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final ruleTypeLabels = RuleType.values.map((e) => e.label).toList();
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.existingRule == null ? 'Neue Regel erstellen' : 'Regel bearbeiten'),
+        title: Text(widget.existingRuleStack == null ? 'Neue Regelgruppe erstellen' : 'Regelgruppe bearbeiten'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -65,79 +73,98 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ------- Rule type selection TextField with Autocomplete -----------------
-
-            Autocomplete<String>(
-              initialValue: TextEditingValue(text: selectedRuleType?.label ?? ''),
-              optionsBuilder: (TextEditingValue textEditingValue) {
-                if (textEditingValue.text.isEmpty) return ruleTypeLabels;
-                return ruleTypeLabels
-                    .where((label) => label.toLowerCase().contains(textEditingValue.text.toLowerCase()));
-              },
-              onSelected: (String selection) {
-                final matchedType = RuleType.values.firstWhere((type) => type.label == selection);
-                setState(() {
-                  selectedRuleType = matchedType;
-                  _eingabenControllers.clear();
-                  selectedRule = matchedType.constructor();
-                  ctrlSpalte.text = selectedRule!.excelField;
-                  for (var eingabe in selectedRule!.eingaben) {
-                    _eingabenControllers.add(TitledTextEditingController(
-                      label: eingabe.label,
-                      controller: TextEditingController(text: eingabe.value()),
-                      valueType: eingabe.valueType,
-                    ));
-                  }
-                });
-              },
-              fieldViewBuilder: (context, controller, focusNode, onEditingComplete) {
-                return TextField(
-                  controller: controller,
-                  focusNode: focusNode,
-                  decoration: InputDecoration(
-                    labelText: 'Regeltyp (tippen oder auswählen)',
-                    border: OutlineInputBorder(),
-                  ),
-                );
-              },
-            ),
-
-            SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: TextField(
-                controller: ctrlSpalte,
-                decoration: InputDecoration(
-                  labelText: 'Spalte',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.text,
+            TextField(
+              controller: ctrlSpalte,
+              decoration: InputDecoration(
+                labelText: 'Spalte (Excel-Feld für diese Regelgruppe)',
+                border: OutlineInputBorder(),
               ),
             ),
-            ..._eingabenControllers.map((eingabe) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextField(
-                  controller: eingabe.controller,
-                  decoration: InputDecoration(
-                    labelText: eingabe.label,
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: eingabe.valueType == int ? TextInputType.number : TextInputType.text,
-                ),
-              );
-            }),
-            SizedBox(height: 24),
+            SizedBox(height: 16),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _ruleBundles.length,
+                itemBuilder: (context, index) {
+                  final bundle = _ruleBundles[index];
+                  return Card(
+                    margin: EdgeInsets.symmetric(vertical: 8),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text('Schritt ${index + 1}', style: TextStyle(fontWeight: FontWeight.bold)),
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: DropdownButton<RuleType>(
+                                  value: bundle.selectedRuleType,
+                                  items: RuleType.values.map((type) {
+                                    return DropdownMenuItem(
+                                      value: type,
+                                      child: Text(type.label),
+                                    );
+                                  }).toList(),
+                                  onChanged: (type) {
+                                    if (type == null) return;
+                                    setState(() {
+                                      bundle.selectedRuleType = type;
+                                      bundle.rule = type.constructor();
+                                      bundle.eingabenControllers.clear();
+                                      for (var eingabe in bundle.rule.eingaben) {
+                                        bundle.eingabenControllers.add(TitledTextEditingController(
+                                          label: eingabe.label,
+                                          controller: TextEditingController(text: eingabe.value()),
+                                          valueType: eingabe.valueType,
+                                        ));
+                                      }
+                                    });
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete, color: Colors.red),
+                                onPressed: () => _removeSubRule(index),
+                              ),
+                            ],
+                          ),
+                          ...bundle.eingabenControllers.map((eingabe) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: TextField(
+                                controller: eingabe.controller,
+                                decoration: InputDecoration(
+                                  labelText: eingabe.label,
+                                  border: OutlineInputBorder(),
+                                ),
+                                keyboardType: eingabe.valueType == int ? TextInputType.number : TextInputType.text,
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 16),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                ElevatedButton.icon(
+                  onPressed: _addSubRule,
+                  icon: Icon(Icons.add),
+                  label: Text('Neue Unterregel hinzufügen'),
+                ),
                 ElevatedButton(
                   onPressed: _saveRule,
-                  child: Text("Speichern"),
+                  child: Text('Speichern'),
                 ),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text("Abbrechen"),
+                  child: Text('Abbrechen'),
                 ),
               ],
             ),
@@ -145,6 +172,59 @@ class _RuleEditorScreenState extends State<RuleEditorScreen> {
         ),
       ),
     );
+  }
+}
+
+class _RuleEditingBundle {
+  RuleType selectedRuleType;
+  Rule rule;
+  List<TitledTextEditingController> eingabenControllers;
+
+  _RuleEditingBundle({
+    required this.selectedRuleType,
+    required this.rule,
+    required this.eingabenControllers,
+  });
+
+  factory _RuleEditingBundle.fromRule(Rule rule) {
+    final eingabenControllers = <TitledTextEditingController>[];
+    for (final eingabe in rule.eingaben) {
+      eingabenControllers.add(TitledTextEditingController(
+        label: eingabe.label,
+        controller: TextEditingController(text: eingabe.value()),
+        valueType: eingabe.valueType,
+      ));
+    }
+    return _RuleEditingBundle(
+      selectedRuleType: rule.ruleType,
+      rule: rule,
+      eingabenControllers: eingabenControllers,
+    );
+  }
+
+  factory _RuleEditingBundle.empty() {
+    final type = RuleType.values.first;
+    final rule = type.constructor();
+    final eingabenControllers = <TitledTextEditingController>[];
+    for (final eingabe in rule.eingaben) {
+      eingabenControllers.add(TitledTextEditingController(
+        label: eingabe.label,
+        controller: TextEditingController(text: eingabe.value()),
+        valueType: eingabe.valueType,
+      ));
+    }
+    return _RuleEditingBundle(
+      selectedRuleType: type,
+      rule: rule,
+      eingabenControllers: eingabenControllers,
+    );
+  }
+
+  Rule toRule() {
+    for (final ctrl in eingabenControllers) {
+      rule.eingaben.firstWhere((e) => e.label == ctrl.label).setValue(ctrl.controller.text.trim());
+    }
+    return rule;
   }
 }
 

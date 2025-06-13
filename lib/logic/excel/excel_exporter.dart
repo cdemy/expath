@@ -1,8 +1,8 @@
 import 'dart:io';
+import 'package:dj_projektarbeit/logic/rules/rule_stack.dart';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import '../filesystem/root_directory_entry.dart';
-import '../rules/_rule.dart';
 
 class ExcelExporter {
   static Future<void> export({

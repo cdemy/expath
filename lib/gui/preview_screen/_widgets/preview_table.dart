@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/rule_stack.dart';
 import 'package:flutter/material.dart';
 
 class PreviewTable extends StatelessWidget {
@@ -34,8 +34,8 @@ class PreviewTable extends StatelessWidget {
                 onChanged: (val) => toggleSelection(file.path, val),
               ),
             ),
-            ...ruleStacks.map((rule) {
-              final result = rule.apply(file) ?? "";
+            ...ruleStacks.map((ruleStack) {
+              final result = ruleStack.apply(file) ?? "";
               return DataCell(Text(result));
             }),
           ],

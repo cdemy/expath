@@ -1,4 +1,4 @@
-import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/rule_stack.dart';
 import 'package:flutter/material.dart';
 
 class RuleStacksList extends StatelessWidget {
