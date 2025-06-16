@@ -3,17 +3,17 @@ import 'dart:io';
 import 'package:dj_projektarbeit/gui/preview_screen/_widgets/preview_table.dart';
 import 'package:dj_projektarbeit/logic/excel/excel_exporter.dart';
 import 'package:dj_projektarbeit/logic/filesystem/root_directory_entry.dart';
-import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/rule_stack.dart';
 import 'package:flutter/material.dart';
 
 class PreviewScreen extends StatefulWidget {
   final List<RootDirectoryEntry> directories;
-  final List<Rule> rules;
+  final List<RuleStack> ruleStacks;
 
   const PreviewScreen({
     super.key,
     required this.directories,
-    required this.rules,
+    required this.ruleStacks,
   });
 
   @override
@@ -55,7 +55,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                             controller: _verticalController,
                             scrollDirection: Axis.vertical,
                             child: PreviewTable(
-                              rules: widget.rules,
+                              ruleStacks: widget.ruleStacks,
                               allFiles: allFiles,
                               selectedRows: selectedRows,
                               toggleSelection: _toggleSelection,
@@ -113,7 +113,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
     try {
       await ExcelExporter.export(
         directories: [RootDirectoryEntry("Selektierte Dateien", selectedFiles)],
-        rules: widget.rules,
+        rulesStacks: widget.ruleStacks,
       );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Excel-Datei erfolgreich exportiert!')),

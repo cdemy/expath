@@ -1,17 +1,17 @@
-import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/rule_stack.dart';
 import 'package:flutter/material.dart';
 
-class RulesList extends StatelessWidget {
-  final List<Rule> rules;
-  final Function(int, int) moveRule;
-  final Function(Rule) editRule;
-  final Function(Rule) removeRule;
+class RuleStacksList extends StatelessWidget {
+  final List<RuleStack> ruleStacks;
+  final Function(int, int) moveRuleStack;
+  final Function(RuleStack) editRuleStack;
+  final Function(RuleStack) removeRuleStack;
 
-  const RulesList({
-    required this.rules,
-    required this.moveRule,
-    required this.editRule,
-    required this.removeRule,
+  const RuleStacksList({
+    required this.ruleStacks,
+    required this.moveRuleStack,
+    required this.editRuleStack,
+    required this.removeRuleStack,
     super.key,
   });
 
@@ -21,7 +21,7 @@ class RulesList extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(),
       ),
-      child: rules.isEmpty
+      child: ruleStacks.isEmpty
           ? Center(child: Text("Noch keine Regeln hinzugefügt."))
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -39,15 +39,18 @@ class RulesList extends StatelessWidget {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: rules.length,
+                    itemCount: ruleStacks.length,
                     itemBuilder: (context, index) {
-                      final rule = rules[index];
+                      final ruleStack = ruleStacks[index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         child: Row(
                           children: [
-                            Expanded(flex: 3, child: Text(rule.excelField)),
-                            Expanded(flex: 4, child: Text(rule.ruleType.label)),
+                            Expanded(flex: 3, child: Text(ruleStack.excelField ?? '???')),
+                            Expanded(
+                                flex: 4,
+                                child:
+                                    Text(ruleStack.rules.fold('', (prev, next) => prev + '->${next.ruleType.label}'))),
                             Expanded(
                               flex: 3,
                               child: Row(
@@ -55,19 +58,20 @@ class RulesList extends StatelessWidget {
                                 children: [
                                   IconButton(
                                     icon: Icon(Icons.arrow_upward),
-                                    onPressed: index > 0 ? () => moveRule(index, index - 1) : null,
+                                    onPressed: index > 0 ? () => moveRuleStack(index, index - 1) : null,
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.arrow_downward),
-                                    onPressed: index < rules.length - 1 ? () => moveRule(index, index + 1) : null,
+                                    onPressed:
+                                        index < ruleStacks.length - 1 ? () => moveRuleStack(index, index + 1) : null,
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.edit),
-                                    onPressed: () => editRule(rule),
+                                    onPressed: () => editRuleStack(ruleStack),
                                   ),
                                   IconButton(
                                     icon: Icon(Icons.delete),
-                                    onPressed: () => removeRule(rule),
+                                    onPressed: () => removeRuleStack(ruleStack),
                                   ),
                                 ],
                               ),

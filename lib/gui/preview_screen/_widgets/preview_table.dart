@@ -1,16 +1,16 @@
 import 'dart:io';
 
-import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/rule_stack.dart';
 import 'package:flutter/material.dart';
 
 class PreviewTable extends StatelessWidget {
-  final List<Rule> rules;
+  final List<RuleStack> ruleStacks;
   final List<File> allFiles;
   final Map<String, bool> selectedRows;
   final void Function(String, bool?) toggleSelection;
 
   const PreviewTable({
-    required this.rules,
+    required this.ruleStacks,
     required this.allFiles,
     required this.selectedRows,
     required this.toggleSelection,
@@ -22,7 +22,7 @@ class PreviewTable extends StatelessWidget {
     return DataTable(
       columns: [
         DataColumn(label: Text('An/Abwählen')), // Checkbox-Spalte
-        ...rules.map((rule) => DataColumn(label: Text(rule.excelField))),
+        ...ruleStacks.map((ruleStack) => DataColumn(label: Text(ruleStack.excelField ?? '???'))),
       ],
       rows: allFiles.map((file) {
         final isChecked = selectedRows[file.path] ?? false;
@@ -34,8 +34,8 @@ class PreviewTable extends StatelessWidget {
                 onChanged: (val) => toggleSelection(file.path, val),
               ),
             ),
-            ...rules.map((rule) {
-              final result = rule.apply(file) ?? "";
+            ...ruleStacks.map((ruleStack) {
+              final result = ruleStack.apply(file) ?? "";
               return DataCell(Text(result));
             }),
           ],

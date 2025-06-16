@@ -4,8 +4,8 @@ import 'package:dj_projektarbeit/logic/rules/_eingabe.dart';
 import 'package:dj_projektarbeit/logic/rules/_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/_rule_type.dart';
 
-class FileSizeRule extends Rule {
-  FileSizeRule();
+class FilePathRule extends Rule {
+  FilePathRule();
 
   @override
   List<Eingabe> get eingaben => [];
@@ -13,7 +13,7 @@ class FileSizeRule extends Rule {
   @override
   String? apply(File file) {
     try {
-      return file.lengthSync().toString();
+      return file.path;
     } catch (e) {
       return null;
     }
@@ -29,10 +29,10 @@ class FileSizeRule extends Rule {
         'type': ruleType.type,
       };
 
-  static FileSizeRule fromJson(Map<String, dynamic> json) {
-    return FileSizeRule();
+  static FilePathRule fromJson(Map<String, dynamic> json) {
+    return FilePathRule();
   }
 
   @override
-  RuleType get ruleType => RuleType.filesize;
+  RuleType get ruleType => RuleType.filepath;
 }
