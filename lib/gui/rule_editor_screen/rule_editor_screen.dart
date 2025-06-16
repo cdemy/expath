@@ -170,20 +170,42 @@ class _RuleStackEditorScreenState extends State<RuleStackEditorScreen> {
                             ],
                           ),
                           ...bundle.eingabenControllers.map((eingabe) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0),
-                              child: TextField(
-                                controller: eingabe.controller,
-                                decoration: InputDecoration(
-                                  labelText: eingabe.label,
-                                  border: OutlineInputBorder(),
+                            if (bundle.rule.runtimeType.toString() == 'LowerUpperCaseRule' &&
+                                eingabe.label == 'Groß-/Kleinschreibung') {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                child: DropdownButtonFormField<int>(
+                                  value: int.tryParse(eingabe.controller.text) ?? 0,
+                                  decoration: InputDecoration(
+                                    labelText: eingabe.label,
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  items: const [
+                                    DropdownMenuItem(value: 0, child: Text('Kleinbuchstaben (lowercase)')),
+                                    DropdownMenuItem(value: 1, child: Text('Großbuchstaben (UPPERCASE)')),
+                                  ],
+                                  onChanged: (val) {
+                                    eingabe.controller.text = val.toString();
+                                    setState(() {});
+                                  },
                                 ),
-                                keyboardType: eingabe.valueType == int ? TextInputType.number : TextInputType.text,
-                                onChanged: (_) {
-                                  setState(() {});
-                                },
-                              ),
-                            );
+                              );
+                            } else {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                child: TextField(
+                                  controller: eingabe.controller,
+                                  decoration: InputDecoration(
+                                    labelText: eingabe.label,
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  keyboardType: eingabe.valueType == int ? TextInputType.number : TextInputType.text,
+                                  onChanged: (_) {
+                                    setState(() {});
+                                  },
+                                ),
+                              );
+                            }
                           }),
                           if (resultSoFar != null) Text(resultSoFar),
                         ],

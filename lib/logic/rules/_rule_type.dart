@@ -5,6 +5,7 @@ import 'package:dj_projektarbeit/logic/rules/created_at_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/file_path_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/file_size_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/file_type_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/lower_upper_case_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/path_segment_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/reverse_path_segment.dart';
 import 'package:dj_projektarbeit/logic/rules/simple_regex_rule.dart';
@@ -33,6 +34,13 @@ enum RuleType {
     type: 'conditional',
     constructor: ConditionalRule.empty,
     fromJson: ConditionalRule.fromJson,
+    onlyFirstPosition: false,
+  ),
+  lowerUpperCase(
+    label: 'Klein-Großschreibung',
+    type: 'lowerUpperCase',
+    constructor: LowerUpperCaseRule.new,
+    fromJson: LowerUpperCaseRule.fromJson,
     onlyFirstPosition: false,
   ),
   fileName(

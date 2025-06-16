@@ -5,6 +5,7 @@ import 'package:dj_projektarbeit/logic/rules/_rule_type.dart';
 import 'package:dj_projektarbeit/logic/rules/concatenation_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/file_path_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/file_type_rule.dart';
+import 'package:dj_projektarbeit/logic/rules/lower_upper_case_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/simple_regex_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/path_segment_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/reverse_path_segment.dart';
@@ -53,6 +54,8 @@ abstract class Rule {
         return FileTypeRule.fromJson(json);
       case RuleType.filepath:
         return FilePathRule.fromJson(json);
+      case RuleType.lowerUpperCase:
+        return LowerUpperCaseRule.fromJson(json);
     }
   }
 }
