@@ -108,7 +108,10 @@ class _MainScreenState extends State<MainScreen> {
   void _addRule() async {
     final ruleStack = await Navigator.push<RuleStack>(
       context,
-      MaterialPageRoute(builder: (context) => RuleStackEditorScreen()),
+      MaterialPageRoute(
+          builder: (context) => RuleStackEditorScreen(
+                directories: directories,
+              )),
     );
     if (ruleStack != null) {
       setState(() {
@@ -148,7 +151,10 @@ class _MainScreenState extends State<MainScreen> {
     final editedRuleStack = await Navigator.push<RuleStack>(
       context,
       MaterialPageRoute(
-        builder: (context) => RuleStackEditorScreen(existingRuleStack: ruleStack),
+        builder: (context) => RuleStackEditorScreen(
+          existingRuleStack: ruleStack,
+          directories: directories,
+        ),
       ),
     );
 

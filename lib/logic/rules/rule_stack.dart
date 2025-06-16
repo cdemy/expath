@@ -14,11 +14,15 @@ class RuleStack {
 
   String? apply(File input) {
     if (rules.isEmpty) return null;
-    var result = rules.first.apply(input);
-    for (var i = 1; i < rules.length; i++) {
-      result = rules[i].applyString(result);
+    try {
+      var result = rules.first.apply(input);
+      for (var i = 1; i < rules.length; i++) {
+        result = rules[i].applyString(result);
+      }
+      return result;
+    } catch (e) {
+      return null;
     }
-    return result;
   }
 
   Map<String, dynamic> toJson() => {'rules': rules.map((r) => r.toJson()), 'excelField': excelField};

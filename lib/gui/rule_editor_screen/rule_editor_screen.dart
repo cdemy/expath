@@ -1,3 +1,4 @@
+import 'package:dj_projektarbeit/logic/filesystem/root_directory_entry.dart';
 import 'package:dj_projektarbeit/logic/rules/rule_stack.dart';
 import 'package:flutter/material.dart';
 import '../../logic/rules/_rule.dart';
@@ -6,11 +7,13 @@ import '../../logic/rules/_rule_type.dart';
 class RuleStackEditorScreen extends StatefulWidget {
   // final Rule? existingRule;
   final RuleStack? existingRuleStack;
+  final List<RootDirectoryEntry> directories;
 
   const RuleStackEditorScreen(
       {super.key,
       // this.existingRule,
-      this.existingRuleStack});
+      this.existingRuleStack,
+      this.directories = const []});
 
   @override
   State<RuleStackEditorScreen> createState() => _RuleStackEditorScreenState();
@@ -22,6 +25,8 @@ class _RuleStackEditorScreenState extends State<RuleStackEditorScreen> {
   Rule? selectedRule;
   final ctrlSpalte = TextEditingController();
   final List<_RuleEditingBundle> _ruleBundles = [];
+  int? chosenIndex;
+  int? maxChosenIndex;
 
   @override
   void initState() {
@@ -36,6 +41,12 @@ class _RuleStackEditorScreenState extends State<RuleStackEditorScreen> {
       }
     } else {
       _ruleBundles.add(_RuleEditingBundle.empty());
+    }
+    if (widget.directories.isNotEmpty) {
+      final x = widget.directories.first;
+      final y = x.files;
+      maxChosenIndex = y.length - 1;
+      chosenIndex = 0;
     }
   }
 
@@ -60,6 +71,7 @@ class _RuleStackEditorScreenState extends State<RuleStackEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final chosenFile = chosenIndex != null ? widget.directories.first.files[chosenIndex!] : null;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.existingRuleStack == null ? 'Neue Regelgruppe erstellen' : 'Regelgruppe bearbeiten'),
@@ -73,6 +85,28 @@ class _RuleStackEditorScreenState extends State<RuleStackEditorScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (chosenIndex != null)
+              Row(children: [
+                IconButton(
+                    icon: Icon(Icons.arrow_left),
+                    onPressed: () {
+                      if (chosenIndex! > 0) {
+                        setState(() {
+                          chosenIndex = chosenIndex! - 1;
+                        });
+                      }
+                    }),
+                Text('$chosenIndex'),
+                IconButton(
+                    icon: Icon(Icons.arrow_right),
+                    onPressed: () {
+                      if (chosenIndex! < maxChosenIndex!) {
+                        setState(() {
+                          chosenIndex = chosenIndex! + 1;
+                        });
+                      }
+                    }),
+              ]),
             TextField(
               controller: ctrlSpalte,
               decoration: InputDecoration(
@@ -85,7 +119,13 @@ class _RuleStackEditorScreenState extends State<RuleStackEditorScreen> {
               child: ListView.builder(
                 itemCount: _ruleBundles.length,
                 itemBuilder: (context, index) {
+                  String? resultSoFar;
                   final bundle = _ruleBundles[index];
+                  if (chosenFile != null) {
+                    final rulesSoFar = _ruleBundles.getRange(0, index + 1).map((rb) => rb.toRule()).toList();
+                    final ruleStackSoFar = RuleStack(rules: rulesSoFar);
+                    resultSoFar = ruleStackSoFar.apply(chosenFile!);
+                  }
                   return Card(
                     margin: EdgeInsets.symmetric(vertical: 8),
                     child: Padding(
@@ -100,7 +140,7 @@ class _RuleStackEditorScreenState extends State<RuleStackEditorScreen> {
                               Expanded(
                                 child: DropdownButton<RuleType>(
                                   value: bundle.selectedRuleType,
-                                  items: RuleType.values.map((type) {
+                                  items: RuleType.values.where((v) => index == 0 || !v.onlyFirstPosition).map((type) {
                                     return DropdownMenuItem(
                                       value: type,
                                       child: Text(type.label),
@@ -139,9 +179,13 @@ class _RuleStackEditorScreenState extends State<RuleStackEditorScreen> {
                                   border: OutlineInputBorder(),
                                 ),
                                 keyboardType: eingabe.valueType == int ? TextInputType.number : TextInputType.text,
+                                onChanged: (_) {
+                                  setState(() {});
+                                },
                               ),
                             );
                           }),
+                          if (resultSoFar != null) Text(resultSoFar),
                         ],
                       ),
                     ),
@@ -203,7 +247,7 @@ class _RuleEditingBundle {
   }
 
   factory _RuleEditingBundle.empty() {
-    final type = RuleType.values.first;
+    final type = RuleType.values.where((v) => !v.onlyFirstPosition).first;
     final rule = type.constructor();
     final eingabenControllers = <TitledTextEditingController>[];
     for (final eingabe in rule.eingaben) {
