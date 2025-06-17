@@ -78,5 +78,6 @@ class ConditionalRule extends Rule {
     );
   }
 
+  @override
   RuleType get ruleType => RuleType.conditional;
 }

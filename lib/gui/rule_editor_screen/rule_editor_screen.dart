@@ -124,7 +124,7 @@ class _RuleStackEditorScreenState extends State<RuleStackEditorScreen> {
                   if (chosenFile != null) {
                     final rulesSoFar = _ruleBundles.getRange(0, index + 1).map((rb) => rb.toRule()).toList();
                     final ruleStackSoFar = RuleStack(rules: rulesSoFar);
-                    resultSoFar = ruleStackSoFar.apply(chosenFile!);
+                    resultSoFar = ruleStackSoFar.apply(chosenFile);
                   }
                   return Card(
                     margin: EdgeInsets.symmetric(vertical: 8),

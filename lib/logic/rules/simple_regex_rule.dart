@@ -5,6 +5,7 @@ import 'package:dj_projektarbeit/logic/rules/_rule.dart';
 import 'package:dj_projektarbeit/logic/rules/_rule_type.dart';
 
 class SimpleRegexRule extends Rule {
+  @override
   final RuleType ruleType;
 
   String regex;

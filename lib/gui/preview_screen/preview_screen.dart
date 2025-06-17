@@ -115,13 +115,17 @@ class _PreviewScreenState extends State<PreviewScreen> {
         directories: [RootDirectoryEntry("Selektierte Dateien", selectedFiles)],
         rulesStacks: widget.ruleStacks,
       );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Excel-Datei erfolgreich exportiert!')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Excel-Datei erfolgreich exportiert!')),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Fehler beim Export: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Fehler beim Export: $e')),
+        );
+      }
     }
   }
 

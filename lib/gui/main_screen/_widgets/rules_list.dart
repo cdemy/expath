@@ -28,7 +28,7 @@ class RuleStacksList extends StatelessWidget {
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                  color: Theme.of(context).colorScheme.secondary.withAlpha(25),
                   child: Row(
                     children: [
                       Expanded(flex: 3, child: Text('Excel-Spalte', style: TextStyle(fontWeight: FontWeight.bold))),
@@ -50,7 +50,7 @@ class RuleStacksList extends StatelessWidget {
                             Expanded(
                                 flex: 4,
                                 child:
-                                    Text(ruleStack.rules.fold('', (prev, next) => prev + '->${next.ruleType.label}'))),
+                                    Text(ruleStack.rules.fold('', (prev, next) => '$prev->${next.ruleType.label}'))),
                             Expanded(
                               flex: 3,
                               child: Row(

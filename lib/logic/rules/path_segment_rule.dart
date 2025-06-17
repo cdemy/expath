@@ -53,5 +53,6 @@ class PathSegmentRule extends Rule {
     );
   }
 
+  @override
   RuleType get ruleType => RuleType.pathSegment;
 }
