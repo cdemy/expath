@@ -1,4 +1,5 @@
-import 'package:dj_projektarbeit/logic/filesystem/root_directory_entry.dart';
+import 'package:expath_app/gui/main_screen/_widgets/directory_list_item.dart';
+import 'package:expath_app/logic/filesystem/root_directory_entry.dart';
 import 'package:flutter/material.dart';
 
 class DirectoriesList extends StatelessWidget {
@@ -38,26 +39,9 @@ class DirectoriesList extends StatelessWidget {
                     itemCount: directories.length,
                     itemBuilder: (context, index) {
                       final dir = directories[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        child: Row(
-                          children: [
-                            Expanded(flex: 6, child: Text(dir.path)),
-                            Expanded(flex: 2, child: Text('${dir.fileCount} Dateien')),
-                            Expanded(
-                              flex: 2,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.delete),
-                                    onPressed: () => removeDirectory(dir),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                      return DirectoryListItem(
+                        directory: dir,
+                        onRemove: () => removeDirectory(dir),
                       );
                     },
                   ),

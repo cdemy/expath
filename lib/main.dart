@@ -1,9 +1,15 @@
-import 'package:dj_projektarbeit/gui/main_screen/main_screen.dart';
+import 'package:expath_app/core/providers.dart';
+import 'package:expath_app/gui/main_screen/main_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp());
+  runApp(
+    ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -12,6 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'EXPATH',
       home: MainScreen(),
       debugShowCheckedModeBanner: false,
     );

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:dj_projektarbeit/logic/filesystem/root_directory_entry.dart';
+import 'package:expath_app/logic/filesystem/root_directory_entry.dart';
 
 void main() {
   test('RootDirectoryEntry speichert Pfad korrekt', () {

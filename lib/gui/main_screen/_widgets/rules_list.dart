@@ -1,4 +1,5 @@
-import 'package:dj_projektarbeit/logic/rules/rule_stack.dart';
+import 'package:expath_app/gui/main_screen/_widgets/rule_stack_list_item.dart';
+import 'package:expath_app/logic/rules/rule_stack.dart';
 import 'package:flutter/material.dart';
 
 class RuleStacksList extends StatelessWidget {
@@ -42,42 +43,14 @@ class RuleStacksList extends StatelessWidget {
                     itemCount: ruleStacks.length,
                     itemBuilder: (context, index) {
                       final ruleStack = ruleStacks[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        child: Row(
-                          children: [
-                            Expanded(flex: 3, child: Text(ruleStack.excelField ?? '???')),
-                            Expanded(
-                                flex: 4,
-                                child:
-                                    Text(ruleStack.rules.fold('', (prev, next) => '$prev->${next.ruleType.label}'))),
-                            Expanded(
-                              flex: 3,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.arrow_upward),
-                                    onPressed: index > 0 ? () => moveRuleStack(index, index - 1) : null,
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.arrow_downward),
-                                    onPressed:
-                                        index < ruleStacks.length - 1 ? () => moveRuleStack(index, index + 1) : null,
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.edit),
-                                    onPressed: () => editRuleStack(ruleStack),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.delete),
-                                    onPressed: () => removeRuleStack(ruleStack),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                      return RuleStackListItem(
+                        ruleStack: ruleStack,
+                        index: index,
+                        totalCount: ruleStacks.length,
+                        onMoveUp: () => moveRuleStack(index, index - 1),
+                        onMoveDown: () => moveRuleStack(index, index + 1),
+                        onEdit: () => editRuleStack(ruleStack),
+                        onRemove: () => removeRuleStack(ruleStack),
                       );
                     },
                   ),

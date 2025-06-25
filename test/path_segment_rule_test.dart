@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dj_projektarbeit/logic/rules/path_segment_rule.dart';
+import 'package:expath_app/logic/rules/path_segment_rule.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

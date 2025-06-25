@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:dj_projektarbeit/logic/rules/_eingabe.dart';
-import 'package:dj_projektarbeit/logic/rules/_rule.dart';
-import 'package:dj_projektarbeit/logic/rules/_rule_type.dart';
-import 'package:dj_projektarbeit/logic/rules/reverse_path_segment.dart';
+import 'package:expath_app/logic/rules/_eingabe.dart';
+import 'package:expath_app/logic/rules/_rule.dart';
+import 'package:expath_app/logic/rules/_rule_type.dart';
+import 'package:expath_app/logic/rules/reverse_path_segment.dart';
 
 class ConcatenationRule implements Rule {
   String? before;

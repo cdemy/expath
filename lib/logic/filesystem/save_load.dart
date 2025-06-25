@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dj_projektarbeit/logic/rules/rule_stack.dart';
+import 'package:expath_app/logic/rules/rule_stack.dart';
 
-abstract class SaveLoad {
+class SaveLoad {
   static Future<void> saveRuleStacksToJson(List<RuleStack> ruleStacks, String filePath) async {
     final jsonList = ruleStacks.map((r) => r.toJson()).toList();
     final jsonString = jsonEncode(jsonList);

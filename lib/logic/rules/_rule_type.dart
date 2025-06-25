@@ -1,14 +1,14 @@
-import 'package:dj_projektarbeit/logic/rules/_rule.dart';
-import 'package:dj_projektarbeit/logic/rules/concatenation_rule.dart';
-import 'package:dj_projektarbeit/logic/rules/conditional_rule.dart';
-import 'package:dj_projektarbeit/logic/rules/created_at_rule.dart';
-import 'package:dj_projektarbeit/logic/rules/file_path_rule.dart';
-import 'package:dj_projektarbeit/logic/rules/file_size_rule.dart';
-import 'package:dj_projektarbeit/logic/rules/file_type_rule.dart';
-import 'package:dj_projektarbeit/logic/rules/lower_upper_case_rule.dart';
-import 'package:dj_projektarbeit/logic/rules/path_segment_rule.dart';
-import 'package:dj_projektarbeit/logic/rules/reverse_path_segment.dart';
-import 'package:dj_projektarbeit/logic/rules/simple_regex_rule.dart';
+import 'package:expath_app/logic/rules/_rule.dart';
+import 'package:expath_app/logic/rules/concatenation_rule.dart';
+import 'package:expath_app/logic/rules/conditional_rule.dart';
+import 'package:expath_app/logic/rules/created_at_rule.dart';
+import 'package:expath_app/logic/rules/file_path_rule.dart';
+import 'package:expath_app/logic/rules/file_size_rule.dart';
+import 'package:expath_app/logic/rules/file_type_rule.dart';
+import 'package:expath_app/logic/rules/lower_upper_case_rule.dart';
+import 'package:expath_app/logic/rules/path_segment_rule.dart';
+import 'package:expath_app/logic/rules/reverse_path_segment.dart';
+import 'package:expath_app/logic/rules/simple_regex_rule.dart';
 
 /// -----------------------------
 /// RuleType - predefined rules

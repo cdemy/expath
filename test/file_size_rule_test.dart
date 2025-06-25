@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dj_projektarbeit/logic/rules/file_size_rule.dart';
+import 'package:expath_app/logic/rules/file_size_rule.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

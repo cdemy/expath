@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:dj_projektarbeit/logic/rules/_eingabe.dart';
-import 'package:dj_projektarbeit/logic/rules/_rule.dart';
-import 'package:dj_projektarbeit/logic/rules/_rule_type.dart';
+import 'package:expath_app/logic/rules/_eingabe.dart';
+import 'package:expath_app/logic/rules/_rule.dart';
+import 'package:expath_app/logic/rules/_rule_type.dart';
 
 class SimpleRegexRule extends Rule {
   @override

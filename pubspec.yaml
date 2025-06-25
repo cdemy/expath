@@ -1,5 +1,5 @@
-name: dj_projektarbeit
-description: "A new Flutter project."
+name: expath_app
+description: "A file metadata exporter with rule-based data extraction and Excel export capabilities."
 publish_to: 'none'
 version: 0.1.0
 
@@ -12,12 +12,14 @@ dependencies:
   file_selector: ^1.0.2
   flutter:
     sdk: flutter
+  flutter_riverpod: ^2.6.1
   intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  rename: ^3.0.1
 
 flutter:
   uses-material-design: true

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dj_projektarbeit/logic/rules/_rule.dart';
+import 'package:expath_app/logic/rules/_rule.dart';
 
 class RuleStack {
   List<Rule> rules;
