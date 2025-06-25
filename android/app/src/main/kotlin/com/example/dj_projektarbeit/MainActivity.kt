@@ -1,4 +1,4 @@
-package com.example.dj_projektarbeit
+package de.cdemy.expath_app
 
 import io.flutter.embedding.android.FlutterActivity
 

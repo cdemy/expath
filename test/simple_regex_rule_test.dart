@@ -1,6 +1,6 @@
 // import 'dart:io';
 
-// import 'package:dj_projektarbeit/logic/rules/simple_regex_rule.dart';
+// import 'package:expath_app/logic/rules/simple_regex_rule.dart';
 // import 'package:flutter_test/flutter_test.dart';
 
 // void main() {
