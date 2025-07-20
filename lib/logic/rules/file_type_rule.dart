@@ -1,14 +1,7 @@
-import 'dart:io';
-
-import 'package:expath_app/logic/rules/_eingabe.dart';
-import 'package:expath_app/logic/rules/_rule.dart';
-import 'package:expath_app/logic/rules/_rule_type.dart';
+part of '_rule.dart';
 
 class FileTypeRule extends Rule {
-  FileTypeRule();
-
-  @override
-  List<Eingabe> get eingaben => [];
+  FileTypeRule() : super(RuleType.filetype);
 
   @override
   String? apply(File file) {
@@ -32,7 +25,4 @@ class FileTypeRule extends Rule {
   static FileTypeRule fromJson(Map<String, dynamic> json) {
     return FileTypeRule();
   }
-
-  @override
-  RuleType get ruleType => RuleType.filetype;
 }

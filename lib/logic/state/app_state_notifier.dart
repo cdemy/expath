@@ -1,33 +1,13 @@
 import 'package:expath_app/logic/filesystem/root_directory_entry.dart';
-import 'package:expath_app/logic/rules/rule_stack.dart';
+import 'package:expath_app/logic/models/rule_stack.dart';
+import 'package:expath_app/logic/state/app_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// State class for MainScreen
-class MainScreenState {
-  final List<RootDirectoryEntry> directories;
-  final List<RuleStack> ruleStacks;
-
-  const MainScreenState({
-    required this.directories,
-    required this.ruleStacks,
-  });
-
-  MainScreenState copyWith({
-    List<RootDirectoryEntry>? directories,
-    List<RuleStack>? ruleStacks,
-  }) {
-    return MainScreenState(
-      directories: directories ?? this.directories,
-      ruleStacks: ruleStacks ?? this.ruleStacks,
-    );
-  }
-}
-
 /// Notifier for MainScreen state management
-class MainScreenNotifier extends Notifier<MainScreenState> {
+class AppStateNotifier extends Notifier<AppState> {
   @override
-  MainScreenState build() {
-    return const MainScreenState(
+  AppState build() {
+    return const AppState(
       directories: [],
       ruleStacks: [],
     );
@@ -39,7 +19,7 @@ class MainScreenNotifier extends Notifier<MainScreenState> {
     if (state.directories.any((dir) => dir.path == directory.path)) {
       return; // Directory already exists
     }
-    
+
     state = state.copyWith(
       directories: [...state.directories, directory],
     );
@@ -72,9 +52,8 @@ class MainScreenNotifier extends Notifier<MainScreenState> {
   }
 
   /// Update a rule stack at a specific index
-  void updateRuleStack(int index, RuleStack ruleStack) {
-    final updatedRuleStacks = [...state.ruleStacks];
-    updatedRuleStacks[index] = ruleStack;
+  void updateRuleStack(RuleStack oldRuleStack, RuleStack ruleStack) {
+    final updatedRuleStacks = [...state.ruleStacks.map((rs) => rs == oldRuleStack ? ruleStack : rs)];
     state = state.copyWith(ruleStacks: updatedRuleStacks);
   }
 
@@ -93,7 +72,7 @@ class MainScreenNotifier extends Notifier<MainScreenState> {
 
   /// Clear all data (directories and rule stacks)
   void clearAll() {
-    state = const MainScreenState(directories: [], ruleStacks: []);
+    state = const AppState(directories: [], ruleStacks: []);
   }
 
   /// Load rule stacks from external source
@@ -101,8 +80,3 @@ class MainScreenNotifier extends Notifier<MainScreenState> {
     state = state.copyWith(ruleStacks: ruleStacks);
   }
 }
-
-/// Provider for MainScreen state
-final mainScreenProvider = NotifierProvider<MainScreenNotifier, MainScreenState>(() {
-  return MainScreenNotifier();
-});

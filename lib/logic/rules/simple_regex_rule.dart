@@ -1,31 +1,24 @@
-import 'dart:io';
-
-import 'package:expath_app/logic/rules/_eingabe.dart';
-import 'package:expath_app/logic/rules/_rule.dart';
-import 'package:expath_app/logic/rules/_rule_type.dart';
+part of '_rule.dart';
 
 class SimpleRegexRule extends Rule {
-  @override
-  final RuleType ruleType;
-
   String regex;
 
   SimpleRegexRule()
-      : ruleType = RuleType.regEx,
-        regex = '';
+      : regex = '',
+        super(RuleType.regEx);
 
   SimpleRegexRule.fileName()
-      : ruleType = RuleType.fileName,
-        regex = r'[^\\/]+$';
+      : regex = r'[^\\/]+$',
+        super(RuleType.fileName);
 
   SimpleRegexRule.parentDirectory()
-      : ruleType = RuleType.parentDirectory,
-        regex = r'^.*(?=\\[^\\]+$)';
+      : regex = r'^.*(?=\\[^\\]+$)',
+        super(RuleType.parentDirectory);
 
   SimpleRegexRule._({
-    required this.ruleType,
+    required RuleType ruleType,
     required this.regex,
-  });
+  }) : super(ruleType);
 
   @override
   String? apply(File input) {
@@ -53,16 +46,4 @@ class SimpleRegexRule extends Rule {
       regex: json['regex'],
     );
   }
-
-  @override
-  List<Eingabe> get eingaben => [
-        Eingabe(
-          label: 'Regex',
-          valueType: String,
-          value: () => regex,
-          setValue: (value) {
-            regex = value;
-          },
-        ),
-      ];
 }

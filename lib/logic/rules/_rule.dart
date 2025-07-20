@@ -1,33 +1,35 @@
 import 'dart:io';
 
-import 'package:expath_app/logic/rules/_eingabe.dart';
 import 'package:expath_app/logic/rules/_rule_type.dart';
-import 'package:expath_app/logic/rules/concatenation_rule.dart';
-import 'package:expath_app/logic/rules/file_path_rule.dart';
-import 'package:expath_app/logic/rules/file_type_rule.dart';
-import 'package:expath_app/logic/rules/lower_upper_case_rule.dart';
-import 'package:expath_app/logic/rules/simple_regex_rule.dart';
-import 'package:expath_app/logic/rules/path_segment_rule.dart';
-import 'package:expath_app/logic/rules/reverse_path_segment.dart';
-import 'package:expath_app/logic/rules/file_size_rule.dart';
-import 'package:expath_app/logic/rules/created_at_rule.dart';
-import 'package:expath_app/logic/rules/conditional_rule.dart';
+import 'package:intl/intl.dart';
+
+part 'concatenation_rule.dart';
+part 'conditional_rule.dart';
+part 'created_at_rule.dart';
+part 'file_path_rule.dart';
+part 'file_size_rule.dart';
+part 'file_type_rule.dart';
+part 'lower_case_rule.dart';
+part 'path_segment_rule.dart';
+part 'reverse_path_segment.dart';
+part 'substring_rule.dart';
+part 'substring_start_rule.dart';
+part 'substring_end_rule.dart';
+part 'simple_regex_rule.dart';
+part 'upper_case_rule.dart';
 
 /// -----------------------------
 /// Abstract Rule
 /// -----------------------------
 
-abstract class Rule {
-  // Rule? stackedRule;
-  // String get excelField;
-  // set excelField(String value);
+sealed class Rule {
   String? apply(File input);
   String? applyString(String? string);
 
   Map<String, dynamic> toJson();
-  RuleType get ruleType;
+  final RuleType ruleType;
 
-  List<Eingabe> get eingaben;
+  const Rule(this.ruleType);
 
   static Rule fromJson(Map<String, dynamic> json) {
     final ruleType = RuleType.fromType(json['type']);
@@ -35,9 +37,9 @@ abstract class Rule {
       case RuleType.concatenation:
         return ConcatenationRule.fromJson(json);
       case RuleType.fileName:
-        return SimpleRegexRule.fromJson(json);
+        return SimpleRegexRule.fileName();
       case RuleType.parentDirectory:
-        return SimpleRegexRule.fromJson(json);
+        return SimpleRegexRule.parentDirectory();
       case RuleType.pathSegment:
         return PathSegmentRule.fromJson(json);
       case RuleType.reversePathSegment:
@@ -54,8 +56,16 @@ abstract class Rule {
         return FileTypeRule.fromJson(json);
       case RuleType.filepath:
         return FilePathRule.fromJson(json);
-      case RuleType.lowerUpperCase:
-        return LowerUpperCaseRule.fromJson(json);
+      case RuleType.lowerCase:
+        return LowerCaseRule.fromJson(json);
+      case RuleType.upperCase:
+        return UpperCaseRule.fromJson(json);
+      case RuleType.substring:
+        return SubstringRule.fromJson(json);
+      case RuleType.substringStart:
+        return SubstringStartRule.fromJson(json);
+      case RuleType.substringEnd:
+        return SubstringEndRule.fromJson(json);
     }
   }
 }

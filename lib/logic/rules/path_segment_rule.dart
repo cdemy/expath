@@ -1,32 +1,15 @@
-import 'dart:io';
-
-import 'package:expath_app/logic/rules/_eingabe.dart';
-import 'package:expath_app/logic/rules/_rule.dart';
-import 'package:expath_app/logic/rules/_rule_type.dart';
+part of '_rule.dart';
 
 class PathSegmentRule extends Rule {
   int index;
 
-  @override
-  List<Eingabe> get eingaben => [
-        Eingabe(
-          label: 'Position',
-          valueType: int,
-          value: () => index.toString(),
-          setValue: (value) {
-            final intValue = int.tryParse(value);
-            if (intValue != null) {
-              index = intValue;
-            }
-          },
-        ),
-      ];
-
   PathSegmentRule._({
     required this.index,
-  });
+  }) : super(RuleType.pathSegment);
 
-  PathSegmentRule() : index = 0;
+  PathSegmentRule()
+      : index = 0,
+        super(RuleType.pathSegment);
 
   @override
   String? apply(File input) {
@@ -52,7 +35,4 @@ class PathSegmentRule extends Rule {
       index: json['index'],
     );
   }
-
-  @override
-  RuleType get ruleType => RuleType.pathSegment;
 }

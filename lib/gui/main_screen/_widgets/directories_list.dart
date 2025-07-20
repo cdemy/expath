@@ -1,23 +1,22 @@
+import 'package:expath_app/core/providers.dart';
 import 'package:expath_app/gui/main_screen/_widgets/directory_list_item.dart';
-import 'package:expath_app/logic/filesystem/root_directory_entry.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DirectoriesList extends StatelessWidget {
-  final List<RootDirectoryEntry> directories;
-  final Function(RootDirectoryEntry) removeDirectory;
+class DirectoriesList extends ConsumerWidget {
   const DirectoriesList({
-    required this.directories,
-    required this.removeDirectory,
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appState = ref.watch(refAppState);
+    final appStateNotifier = ref.read(refAppState.notifier);
     return Container(
       decoration: BoxDecoration(
         border: Border.all(),
       ),
-      child: directories.isEmpty
+      child: appState.directories.isEmpty
           ? Center(child: Text('Noch keine Verzeichnisse hinzugefügt.'))
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -36,12 +35,12 @@ class DirectoriesList extends StatelessWidget {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: directories.length,
+                    itemCount: appState.directories.length,
                     itemBuilder: (context, index) {
-                      final dir = directories[index];
+                      final dir = appState.directories[index];
                       return DirectoryListItem(
                         directory: dir,
-                        onRemove: () => removeDirectory(dir),
+                        onRemove: () => appStateNotifier.removeDirectory(dir),
                       );
                     },
                   ),

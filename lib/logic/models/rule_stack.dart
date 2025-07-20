@@ -4,13 +4,12 @@ import 'package:expath_app/logic/rules/_rule.dart';
 
 class RuleStack {
   List<Rule> rules;
-  // String get type;
-  String? excelField;
+  String excelField;
 
   RuleStack({
     this.rules = const [],
-    this.excelField,
-  });
+    this.excelField = '',
+  }) : assert(excelField.isNotEmpty, 'Excel field cannot be empty');
 
   String? apply(File input) {
     if (rules.isEmpty) return null;

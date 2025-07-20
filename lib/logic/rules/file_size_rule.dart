@@ -1,14 +1,7 @@
-import 'dart:io';
-
-import 'package:expath_app/logic/rules/_eingabe.dart';
-import 'package:expath_app/logic/rules/_rule.dart';
-import 'package:expath_app/logic/rules/_rule_type.dart';
+part of '_rule.dart';
 
 class FileSizeRule extends Rule {
-  FileSizeRule();
-
-  @override
-  List<Eingabe> get eingaben => [];
+  FileSizeRule() : super(RuleType.filesize);
 
   @override
   String? apply(File file) {
@@ -32,7 +25,4 @@ class FileSizeRule extends Rule {
   static FileSizeRule fromJson(Map<String, dynamic> json) {
     return FileSizeRule();
   }
-
-  @override
-  RuleType get ruleType => RuleType.filesize;
 }

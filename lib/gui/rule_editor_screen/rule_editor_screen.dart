@@ -1,197 +1,182 @@
+import 'package:expath_app/core/providers.dart';
+import 'package:expath_app/gui/rule_editor_screen/_widgets/rule_excel_input_field.dart';
 import 'package:expath_app/gui/rule_editor_screen/_widgets/rule_step_card.dart';
-import 'package:expath_app/gui/rule_editor_screen/rule_editor_state.dart';
-import 'package:expath_app/logic/filesystem/root_directory_entry.dart';
-import 'package:expath_app/logic/rules/rule_stack.dart';
+import 'package:expath_app/gui/rule_editor_screen/state/rule_editor_state_notifier.dart';
+import 'package:expath_app/logic/models/rule_stack.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RuleStackEditorScreen extends ConsumerWidget {
+class RuleStackEditorScreen extends ConsumerStatefulWidget {
   final RuleStack? existingRuleStack;
-  final List<RootDirectoryEntry> directories;
 
   const RuleStackEditorScreen({
-    super.key,
     this.existingRuleStack,
-    this.directories = const [],
+    super.key,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final editorState = ref.watch(ruleEditorProvider);
-    final editorNotifier = ref.read(ruleEditorProvider.notifier);
+  ConsumerState<RuleStackEditorScreen> createState() => _RuleStackEditorScreenState();
+}
 
-    // Initialize if not already done
-    if (editorState.directories.isEmpty && editorState.ruleBundles.isEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        editorNotifier.initialize(existingRuleStack, directories);
-      });
-    }
+class _RuleStackEditorScreenState extends ConsumerState<RuleStackEditorScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  int currentFileIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final ruleEditorState = ref.watch(refRuleEditor);
+    final ruleEditorNotifier = ref.read(refRuleEditor.notifier);
+    final appState = ref.watch(refAppState);
+    final appStateNotifier = ref.read(refAppState.notifier);
+    final directory = appState.directories.isNotEmpty ? appState.directories.first : null;
+    final maxIndex = directory != null ? directory.files.length - 1 : null;
+    final currentFile = directory != null && directory.files.isNotEmpty ? directory.files[currentFileIndex] : null;
     return Scaffold(
-      appBar: _buildAppBar(context, editorNotifier),
+      appBar: AppBar(
+        title: Text(widget.existingRuleStack == null ? 'Neuen Regelstapel erstellen' : 'Regelstapel bearbeiten'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildFileNavigator(editorState, editorNotifier),
+            if (directory != null && directory.files.isNotEmpty)
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.preview, size: 16),
+                    SizedBox(width: 8),
+                    Text('Vorschau-Datei:'),
+                    SizedBox(width: 8),
+                    IconButton(
+                      icon: Icon(Icons.arrow_left),
+                      onPressed: currentFileIndex > 0
+                          ? () {
+                              setState(() {
+                                currentFileIndex--;
+                              });
+                            }
+                          : null,
+                    ),
+                    Text('${currentFileIndex + 1} / ${maxIndex! + 1}'),
+                    IconButton(
+                      icon: Icon(Icons.arrow_right),
+                      onPressed: currentFileIndex < maxIndex
+                          ? () {
+                              setState(() {
+                                currentFileIndex++;
+                              });
+                            }
+                          : null,
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        currentFile?.path ?? 'Keine Datei',
+                        style: TextStyle(fontSize: 12, fontFamily: 'monospace'),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             SizedBox(height: 16),
-            _buildExcelFieldInput(editorState),
+            RuleExcelInputField(
+              initialValue: widget.existingRuleStack?.excelField,
+            ),
             SizedBox(height: 16),
             Expanded(
-              child: _buildRulesList(editorState, editorNotifier),
+              child: ruleEditorState.protoRules.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.rule, size: 64, color: Colors.grey),
+                          SizedBox(height: 16),
+                          Text('Keine Regeln definiert'),
+                          SizedBox(height: 8),
+                          ElevatedButton.icon(
+                            onPressed: () => ruleEditorNotifier.addProtoRule(),
+                            icon: Icon(Icons.add),
+                            label: Text('Erste Regel hinzufügen'),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: ruleEditorState.protoRules.length,
+                      itemBuilder: (context, index) {
+                        return RuleEditorRuleCard(
+                          ruleIndex: index,
+                          previewFile: currentFile,
+                          key: Key('rule_card:${ruleEditorState.protoRules[index].ruleType}:$index'),
+                        );
+                      },
+                    ),
             ),
             SizedBox(height: 16),
-            _buildActionButtons(context, editorState, editorNotifier),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Build the app bar
-  AppBar _buildAppBar(BuildContext context, RuleEditorNotifier notifier) {
-    return AppBar(
-      title: Text(existingRuleStack == null ? 'Neue Regelgruppe erstellen' : 'Regelgruppe bearbeiten'),
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back),
-        onPressed: () {
-          notifier.cleanup();
-          Navigator.pop(context);
-        },
-      ),
-    );
-  }
-
-  /// Build file navigator for preview
-  Widget _buildFileNavigator(RuleEditorState state, RuleEditorNotifier notifier) {
-    if (state.currentFileIndex == null) return SizedBox.shrink();
-
-    return Container(
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.preview, size: 16),
-          SizedBox(width: 8),
-          Text('Vorschau-Datei:'),
-          SizedBox(width: 8),
-          IconButton(
-            icon: Icon(Icons.arrow_left),
-            onPressed: state.canNavigatePrevious ? () => notifier.navigateToPreviousFile() : null,
-          ),
-          Text('${state.currentFileIndex! + 1} / ${(state.maxFileIndex ?? 0) + 1}'),
-          IconButton(
-            icon: Icon(Icons.arrow_right),
-            onPressed: state.canNavigateNext ? () => notifier.navigateToNextFile() : null,
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              state.currentFile?.path ?? 'Keine Datei',
-              style: TextStyle(fontSize: 12, fontFamily: 'monospace'),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Build Excel field input
-  Widget _buildExcelFieldInput(RuleEditorState state) {
-    return TextField(
-      controller: state.excelFieldController,
-      decoration: InputDecoration(
-        labelText: 'Spalte (Excel-Feld für diese Regelgruppe)',
-        border: OutlineInputBorder(),
-        errorText: state.validationErrors['excelField'],
-        helperText: 'Name der Spalte in der Excel-Datei',
-      ),
-    );
-  }
-
-  /// Build the list of rule steps
-  Widget _buildRulesList(RuleEditorState state, RuleEditorNotifier notifier) {
-    if (state.ruleBundles.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.rule, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
-            Text('Keine Regeln definiert'),
-            SizedBox(height: 8),
-            ElevatedButton.icon(
-              onPressed: () => notifier.addRuleBundle(),
-              icon: Icon(Icons.add),
-              label: Text('Erste Regel hinzufügen'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () => ruleEditorNotifier.addProtoRule(),
+                  icon: Icon(Icons.add),
+                  label: Text('Neue Unterregel hinzufügen'),
+                ),
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('Abbrechen'),
+                    ),
+                    SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        final ruleStack = ruleEditorState.toRuleStack();
+                        if (ruleStack == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Fehler beim Erstellen des Regelstapels')),
+                          );
+                          return;
+                        }
+                        if (widget.existingRuleStack != null) {
+                          appStateNotifier.updateRuleStack(widget.existingRuleStack!, ruleStack);
+                        } else {
+                          appStateNotifier.addRuleStack(ruleStack);
+                        }
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Speichern'),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),
-      );
-    }
-
-    return ListView.builder(
-      itemCount: state.ruleBundles.length,
-      itemBuilder: (context, index) {
-        final bundle = state.ruleBundles[index];
-        return RuleStepCard(
-          stepIndex: index,
-          bundle: bundle,
-          previewFile: state.currentFile,
-          allBundles: state.ruleBundles,
-          onRuleTypeChanged: (ruleType) => notifier.updateRuleType(index, ruleType),
-          onRemove: () => notifier.removeRuleBundle(index),
-          onInputChanged: () => notifier.validate(),
-        );
-      },
+      ),
     );
-  }
-
-  /// Build action buttons
-  Widget _buildActionButtons(BuildContext context, RuleEditorState state, RuleEditorNotifier notifier) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        ElevatedButton.icon(
-          onPressed: () => notifier.addRuleBundle(),
-          icon: Icon(Icons.add),
-          label: Text('Neue Unterregel hinzufügen'),
-        ),
-        Row(
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                notifier.cleanup();
-                Navigator.pop(context);
-              },
-              child: Text('Abbrechen'),
-            ),
-            SizedBox(width: 8),
-            ElevatedButton(
-              onPressed: state.isValid ? () => _saveRule(context, notifier) : null,
-              child: Text('Speichern'),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  /// Save the rule and return to previous screen
-  void _saveRule(BuildContext context, RuleEditorNotifier notifier) {
-    notifier.validate();
-    // Get the current state from the provider instead of accessing state directly
-    final currentState = notifier.build();
-    
-    if (currentState.isValid) {
-      final ruleStack = notifier.createRuleStack();
-      notifier.cleanup();
-      Navigator.pop(context, ruleStack);
-    }
   }
 }

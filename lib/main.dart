@@ -1,4 +1,3 @@
-import 'package:expath_app/core/providers.dart';
 import 'package:expath_app/gui/main_screen/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

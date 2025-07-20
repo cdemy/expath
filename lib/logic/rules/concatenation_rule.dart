@@ -1,35 +1,8 @@
-import 'dart:io';
+part of '_rule.dart';
 
-import 'package:expath_app/logic/rules/_eingabe.dart';
-import 'package:expath_app/logic/rules/_rule.dart';
-import 'package:expath_app/logic/rules/_rule_type.dart';
-import 'package:expath_app/logic/rules/reverse_path_segment.dart';
-
-class ConcatenationRule implements Rule {
+class ConcatenationRule extends Rule {
   String? before;
   String? after;
-
-  @override
-  List<Eingabe> get eingaben => [
-        Eingabe(
-          label: 'Davor',
-          valueType: String,
-          value: () => before ?? '',
-          setValue: (value) {
-            before = value;
-          },
-          hint: 'Beliebige Zeichenkette',
-        ),
-        Eingabe(
-          label: 'Danach',
-          valueType: String,
-          value: () => after ?? '',
-          setValue: (value) {
-            after = value;
-          },
-          hint: 'Beliebige Zeichenkette',
-        ),
-      ];
 
   @override
   String? apply(File input) {
@@ -42,9 +15,6 @@ class ConcatenationRule implements Rule {
     if (string == null) return null;
     return (before ?? '') + string + (after ?? '');
   }
-
-  @override
-  RuleType get ruleType => RuleType.concatenation;
 
   @override
   Map<String, dynamic> toJson() => {
@@ -60,10 +30,13 @@ class ConcatenationRule implements Rule {
     );
   }
 
-  ConcatenationRule();
+  ConcatenationRule()
+      : before = null,
+        after = null,
+        super(RuleType.concatenation);
 
   ConcatenationRule._({
     required this.before,
     required this.after,
-  });
+  }) : super(RuleType.concatenation);
 }

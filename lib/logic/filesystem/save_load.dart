@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:expath_app/logic/rules/rule_stack.dart';
+import 'package:expath_app/logic/models/rule_stack.dart';
 
 class SaveLoad {
   static Future<void> saveRuleStacksToJson(List<RuleStack> ruleStacks, String filePath) async {

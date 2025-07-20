@@ -1,29 +1,11 @@
-import 'dart:io';
-
-import 'package:expath_app/logic/rules/_eingabe.dart';
-import 'package:expath_app/logic/rules/_rule.dart';
-import 'package:expath_app/logic/rules/_rule_type.dart';
-import 'package:intl/intl.dart';
+part of '_rule.dart';
 
 class CreatedAtRule extends Rule {
   String format;
 
   CreatedAtRule({
     this.format = 'yyyy-MM-dd HH:mm:ss',
-  });
-
-  @override
-  List<Eingabe> get eingaben => [
-        Eingabe(
-          label: 'Datumsformat',
-          valueType: String,
-          value: () => format,
-          setValue: (value) {
-            format = value;
-          },
-          hint: 'z.B. dd.MM.yyyy oder yyyyMMdd',
-        ),
-      ];
+  }) : super(RuleType.createdAt);
 
   @override
   String? apply(File file) {
@@ -51,7 +33,4 @@ class CreatedAtRule extends Rule {
       format: json['format'] ?? 'yyyy-MM-dd HH:mm:ss',
     );
   }
-
-  @override
-  RuleType get ruleType => RuleType.createdAt;
 }

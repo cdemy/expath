@@ -1,69 +1,53 @@
 import 'dart:io';
 
-import 'package:expath_app/logic/rules/rule_stack.dart';
+import 'package:expath_app/core/providers.dart';
+import 'package:expath_app/gui/preview_screen/state/preview_screen_notifier.dart';
+import 'package:expath_app/logic/models/rule_stack.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PreviewTable extends StatelessWidget {
-  final List<RuleStack> ruleStacks;
-  final List<File> allFiles;
-  final Map<String, bool> selectedRows;
-  final void Function(String, bool?) toggleSelection;
-
+class PreviewTable extends ConsumerWidget {
   const PreviewTable({
-    required this.ruleStacks,
-    required this.allFiles,
-    required this.selectedRows,
-    required this.toggleSelection,
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final previewState = ref.watch(refPreviewScreen);
+    final appState = ref.watch(refAppState);
+    final ruleStacks = appState.ruleStacks;
+    final allFiles = appState.directories.expand((dir) => dir.files).toList();
+    final selectedRows = previewState.selectedRows;
+    final selectedFiles = selectedRows.map((index) => allFiles[index]).toList();
     return DataTable(
-      columns: _buildTableColumns(),
-      rows: _buildTableRows(),
-    );
-  }
-
-  /// Build the table columns (headers)
-  List<DataColumn> _buildTableColumns() {
-    return [
-      DataColumn(label: Text('An/Abwählen')), // Checkbox column
-      ...ruleStacks.map((ruleStack) => DataColumn(
-        label: Text(ruleStack.excelField ?? '???'),
-      )),
-    ];
-  }
-
-  /// Build the table rows (data)
-  List<DataRow> _buildTableRows() {
-    return allFiles.map((file) => _buildTableRow(file)).toList();
-  }
-
-  /// Build a single table row for a file
-  DataRow _buildTableRow(File file) {
-    final isChecked = selectedRows[file.path] ?? false;
-    
-    return DataRow(
-      cells: [
-        _buildCheckboxCell(file, isChecked),
-        ..._buildRuleResultCells(file),
+      columns: [
+        DataColumn(label: Text('An/Abwählen')), // Checkbox column
+        ...appState.ruleStacks.map((ruleStack) => DataColumn(
+              label: Text(ruleStack.excelField),
+            )),
       ],
-    );
-  }
-
-  /// Build the checkbox cell for file selection
-  DataCell _buildCheckboxCell(File file, bool isChecked) {
-    return DataCell(
-      Checkbox(
-        value: isChecked,
-        onChanged: (val) => toggleSelection(file.path, val),
-      ),
+      rows: allFiles
+          .map((file) => DataRow(
+                cells: [
+                  DataCell(
+                    Checkbox(
+                      value: selectedFiles.contains(file),
+                      onChanged: (_) {
+                        final index = allFiles.indexOf(file);
+                        final notifier = ref.read(refPreviewScreen.notifier);
+                        notifier.toggleSelection(index);
+                      },
+                    ),
+                  ),
+                  ..._buildRuleResultCells(file, ruleStacks),
+                ],
+              ))
+          .toList(),
     );
   }
 
   /// Build cells containing rule application results
-  List<DataCell> _buildRuleResultCells(File file) {
+  List<DataCell> _buildRuleResultCells(File file, List<RuleStack> ruleStacks) {
     return ruleStacks.map((ruleStack) => _buildRuleResultCell(file, ruleStack)).toList();
   }
 
@@ -94,14 +78,14 @@ class PreviewTable extends StatelessWidget {
     } on FormatException catch (e) {
       return 'ERROR: Formatfehler (${e.message})';
     } catch (e) {
-      return 'ERROR: Regel "${ruleStack.excelField ?? 'Unbenannt'}" fehlgeschlagen';
+      return 'ERROR: Regel "${ruleStack.excelField}" fehlgeschlagen';
     }
   }
 
   /// Show detailed error information
   void _showErrorDetails(RuleStack ruleStack, String errorMessage) {
     // This would need a BuildContext to show a dialog
-    // For now, we'll just print the error (in a real implementation, 
+    // For now, we'll just print the error (in a real implementation,
     // this could be handled by passing a callback or using a global error handler)
     debugPrint('Error in rule stack "${ruleStack.excelField}": $errorMessage');
   }

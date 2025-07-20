@@ -1,14 +1,16 @@
-import 'package:expath_app/logic/rules/rule_stack.dart';
+import 'package:expath_app/gui/rule_editor_screen/state/rule_editor_state_notifier.dart';
+import 'package:expath_app/gui/rule_editor_screen/rule_editor_screen.dart';
+import 'package:expath_app/logic/models/rule_stack.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Individual rule stack list item widget
-class RuleStackListItem extends StatelessWidget {
+class RuleStackListItem extends ConsumerWidget {
   final RuleStack ruleStack;
   final int index;
   final int totalCount;
   final VoidCallback onMoveUp;
   final VoidCallback onMoveDown;
-  final VoidCallback onEdit;
   final VoidCallback onRemove;
 
   const RuleStackListItem({
@@ -18,17 +20,16 @@ class RuleStackListItem extends StatelessWidget {
     required this.totalCount,
     required this.onMoveUp,
     required this.onMoveDown,
-    required this.onEdit,
     required this.onRemove,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: Row(
         children: [
-          Expanded(flex: 3, child: Text(ruleStack.excelField ?? '???')),
+          Expanded(flex: 3, child: Text(ruleStack.excelField)),
           Expanded(
             flex: 4,
             child: Text(_buildRuleTypesDisplay()),
@@ -48,7 +49,16 @@ class RuleStackListItem extends StatelessWidget {
                 ),
                 IconButton(
                   icon: Icon(Icons.edit),
-                  onPressed: onEdit,
+                  onPressed: () {
+                    final ruleEditorNotifier = ref.read(refRuleEditor.notifier);
+                    ruleEditorNotifier.initialize(ruleStack); // Initialize the editor with the existing rule stack
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RuleStackEditorScreen(existingRuleStack: ruleStack),
+                      ),
+                    );
+                  },
                 ),
                 IconButton(
                   icon: Icon(Icons.delete),
@@ -67,10 +77,8 @@ class RuleStackListItem extends StatelessWidget {
     if (ruleStack.rules.isEmpty) {
       return 'Keine Regeln';
     }
-    
-    return ruleStack.rules
-        .map((rule) => rule.ruleType.label)
-        .join(' → ');
+
+    return ruleStack.rules.map((rule) => rule.ruleType.label).join(' → ');
   }
 
   /// Show confirmation dialog before removing rule stack
@@ -79,7 +87,7 @@ class RuleStackListItem extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Regelstapel entfernen'),
-        content: Text('Möchten Sie den Regelstapel "${ruleStack.excelField ?? 'Unbenannt'}" wirklich entfernen?'),
+        content: Text('Möchten Sie den Regelstapel "${ruleStack.excelField}" wirklich entfernen?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),

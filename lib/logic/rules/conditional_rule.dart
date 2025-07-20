@@ -1,8 +1,4 @@
-import 'dart:io';
-
-import 'package:expath_app/logic/rules/_eingabe.dart';
-import 'package:expath_app/logic/rules/_rule.dart';
-import 'package:expath_app/logic/rules/_rule_type.dart';
+part of '_rule.dart';
 
 class ConditionalRule extends Rule {
   String keyword;
@@ -12,41 +8,14 @@ class ConditionalRule extends Rule {
   ConditionalRule.empty()
       : keyword = '',
         valueIfMatch = '',
-        valueIfNoMatch = '';
+        valueIfNoMatch = '',
+        super(RuleType.conditional);
 
   ConditionalRule({
     required this.keyword,
     required this.valueIfMatch,
     required this.valueIfNoMatch,
-  });
-
-  @override
-  List<Eingabe> get eingaben => [
-        Eingabe(
-          label: 'Keyword',
-          valueType: String,
-          value: () => keyword,
-          setValue: (value) {
-            keyword = value;
-          },
-        ),
-        Eingabe(
-          label: 'Value if match',
-          valueType: String,
-          value: () => valueIfMatch,
-          setValue: (value) {
-            valueIfMatch = value;
-          },
-        ),
-        Eingabe(
-          label: 'Value if no match',
-          valueType: String,
-          value: () => valueIfNoMatch,
-          setValue: (value) {
-            valueIfNoMatch = value;
-          },
-        ),
-      ];
+  }) : super(RuleType.conditional);
 
   @override
   String? apply(File file) {
@@ -77,7 +46,4 @@ class ConditionalRule extends Rule {
       valueIfNoMatch: json['valueIfNoMatch'] as String,
     );
   }
-
-  @override
-  RuleType get ruleType => RuleType.conditional;
 }

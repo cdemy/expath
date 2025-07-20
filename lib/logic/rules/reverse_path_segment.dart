@@ -1,17 +1,15 @@
-import 'dart:io';
-
-import 'package:expath_app/logic/rules/_eingabe.dart';
-import 'package:expath_app/logic/rules/_rule.dart';
-import 'package:expath_app/logic/rules/_rule_type.dart';
+part of '_rule.dart';
 
 class ReversePathSegmentRule extends Rule {
   int reverseIndex;
 
   ReversePathSegmentRule._({
     required this.reverseIndex,
-  });
+  }) : super(RuleType.reversePathSegment);
 
-  ReversePathSegmentRule() : reverseIndex = 0;
+  ReversePathSegmentRule()
+      : reverseIndex = 0,
+        super(RuleType.reversePathSegment);
 
   @override
   String? apply(File input) {
@@ -38,22 +36,4 @@ class ReversePathSegmentRule extends Rule {
       reverseIndex: json['reverseIndex'],
     );
   }
-
-  @override
-  List<Eingabe> get eingaben => [
-        Eingabe(
-          label: 'Rückwärts-Index',
-          valueType: int,
-          value: () => reverseIndex.toString(),
-          setValue: (value) {
-            final intValue = int.tryParse(value);
-            if (intValue != null) {
-              reverseIndex = intValue;
-            }
-          },
-        ),
-      ];
-
-  @override
-  RuleType get ruleType => RuleType.reversePathSegment;
 }
