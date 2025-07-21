@@ -33,7 +33,7 @@ class ReversePathSegmentRule extends Rule {
 
   static ReversePathSegmentRule fromJson(Map<String, dynamic> json) {
     return ReversePathSegmentRule._(
-      reverseIndex: json['reverseIndex'],
+      reverseIndex: int.parse(json['reverseIndex'].toString()),
     );
   }
 }

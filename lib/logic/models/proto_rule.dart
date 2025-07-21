@@ -16,7 +16,7 @@ class ProtoRule {
     for (final eingabeBlueprint in rule.ruleType.eingabeBlueprints) {
       protoEingaben.add(ProtoEingabe(
         label: eingabeBlueprint.label,
-        eingabe: eingabeBlueprint.defaultValue,
+        eingabe: rule.toJson()[eingabeBlueprint.field]?.toString() ?? eingabeBlueprint.defaultValue,
         valueType: eingabeBlueprint.valueType,
       ));
     }

@@ -6,25 +6,123 @@ import 'package:expath_app/logic/rules/_rule.dart';
 /// -----------------------------
 
 enum RuleType {
-  regEx(
-    label: 'Benutzerdefinierter Regex',
-    type: 'regEx',
-    constructor: SimpleRegexRule.new,
+  fileName(
+    type: 'fileName',
+    label: 'Dateiname',
+    constructor: SimpleRegexRule.fileName,
     // fromJson: SimpleRegexRule.fromJson,
-    onlyFirstPosition: false,
+    onlyFirstPosition: true,
+    eingabeBlueprints: [],
+  ),
+
+  parentDirectory(
+    type: 'parentDirectory',
+    label: 'Dateiordner',
+    constructor: SimpleRegexRule.parentDirectory,
+    // fromJson: SimpleRegexRule.fromJson,
+    onlyFirstPosition: true,
+    eingabeBlueprints: [],
+  ),
+
+  filepath(
+    label: 'Dateipfad',
+    type: 'filepath',
+    constructor: FilePathRule.new,
+    // fromJson: FilePathRule.fromJson,
+    onlyFirstPosition: true,
+    eingabeBlueprints: [],
+  ),
+
+  filetype(
+    label: 'Dateityp',
+    type: 'filetype',
+    constructor: FileTypeRule.new,
+    // fromJson: FileTypeRule.fromJson,
+    onlyFirstPosition: true,
+    eingabeBlueprints: [],
+  ),
+
+  filesize(
+    label: 'Dateigröße',
+    type: 'fileSize',
+    constructor: FileSizeRule.new,
+    // fromJson: FileSizeRule.fromJson,
+    onlyFirstPosition: true,
+    eingabeBlueprints: [],
+  ),
+
+  modifiedAt(
+    label: 'Geändert am',
+    type: 'modifiedAt',
+    constructor: ModifiedAtRule.new,
+    // fromJson: CreatedAtRule.fromJson,
+    onlyFirstPosition: true,
     eingabeBlueprints: [
       ProtoEingabeBlueprint(
-        label: 'Regex',
-        helperText: 'Regulärer Ausdruck (z.B. \\d+ für Zahlen)',
-        field: 'regex',
+        label: 'Format',
+        helperText: 'Format des Datums (z.B. dd.MM.yyyy HH:mm:ss)',
+        field: 'format',
         valueType: String,
-        defaultValue: '',
+        defaultValue: 'dd.MM.yyyy HH:mm:ss',
       ),
     ],
   ),
+
+  pathSegment(
+    type: 'pathSegment',
+    label: 'Pfadsegment',
+    constructor: PathSegmentRule.new,
+    // fromJson: PathSegmentRule.fromJson,
+    onlyFirstPosition: true,
+    eingabeBlueprints: [
+      ProtoEingabeBlueprint(
+        label: 'Position',
+        helperText: '0 = Partition, 1 = erster Ordner, 2 = zweiter Ordner, ...',
+        field: 'index',
+        valueType: int,
+        defaultValue: '0',
+      ),
+    ],
+  ),
+
+  reversePathSegment(
+    label: 'Pfadsegment (umgekehrt)',
+    type: 'reversePathSegment',
+    constructor: ReversePathSegmentRule.new,
+    // fromJson: ReversePathSegmentRule.fromJson,
+    onlyFirstPosition: true,
+    eingabeBlueprints: [
+      ProtoEingabeBlueprint(
+        label: 'Position',
+        helperText: '0 = Datei, 1 = letzter Ordner, 2 = vorletzter Ordner, ...',
+        field: 'reverseIndex',
+        valueType: int,
+        defaultValue: '0',
+      ),
+    ],
+  ),
+
+  lowerCase(
+    label: 'Kleinschreibung',
+    type: 'lowerCase',
+    constructor: LowerCaseRule.new,
+    // fromJson: LowerCaseRule.fromJson,
+    onlyFirstPosition: false,
+    eingabeBlueprints: [],
+  ),
+
+  upperCase(
+    label: 'Großschreibung',
+    type: 'upperCase',
+    constructor: UpperCaseRule.new,
+    // fromJson: UpperCaseRule.fromJson,
+    onlyFirstPosition: false,
+    eingabeBlueprints: [],
+  ),
+
   concatenation(
     type: 'concatenation',
-    label: 'Verketten',
+    label: 'Verkettung',
     constructor: ConcatenationRule.new,
     // fromJson: ConcatenationRule.fromJson,
     onlyFirstPosition: false,
@@ -47,7 +145,7 @@ enum RuleType {
   ),
 
   conditional(
-    label: 'Fallunterscheidung',
+    label: 'Wenn dann sonst',
     type: 'conditional',
     constructor: ConditionalRule.empty,
     // fromJson: ConditionalRule.fromJson,
@@ -77,109 +175,28 @@ enum RuleType {
     ],
   ),
 
-  lowerCase(
-    label: 'Kleinschreibung',
-    type: 'lowerCase',
-    constructor: LowerCaseRule.new,
-    // fromJson: LowerCaseRule.fromJson,
+  conditionalReplacement(
+    label: 'Wenn dann ersetzen',
+    type: 'conditionalReplacement',
+    constructor: ConditionalReplacementRule.empty,
+    // fromJson: ConditionalReplacementRule.fromJson,
     onlyFirstPosition: false,
-    eingabeBlueprints: [],
-  ),
-
-  upperCase(
-    label: 'Großschreibung',
-    type: 'upperCase',
-    constructor: UpperCaseRule.new,
-    // fromJson: UpperCaseRule.fromJson,
-    onlyFirstPosition: false,
-    eingabeBlueprints: [],
-  ),
-
-  fileName(
-    type: 'fileName',
-    label: 'Dateiname extrahieren',
-    constructor: SimpleRegexRule.fileName,
-    // fromJson: SimpleRegexRule.fromJson,
-    onlyFirstPosition: true,
-    eingabeBlueprints: [],
-  ),
-
-  parentDirectory(
-    type: 'parentDirectory',
-    label: 'Ordnerpfad extrahieren',
-    constructor: SimpleRegexRule.parentDirectory,
-    // fromJson: SimpleRegexRule.fromJson,
-    onlyFirstPosition: true,
-    eingabeBlueprints: [],
-  ),
-
-  pathSegment(
-    type: 'pathSegment',
-    label: 'Ordner an Position extrahieren',
-    constructor: PathSegmentRule.new,
-    // fromJson: PathSegmentRule.fromJson,
-    onlyFirstPosition: true,
     eingabeBlueprints: [
       ProtoEingabeBlueprint(
-        label: 'Position',
-        helperText: '0 = Partition, 1 = erster Ordner, 2 = zweiter Ordner, ...',
-        field: 'index',
-        valueType: int,
-        defaultValue: '0',
-      ),
-    ],
-  ),
-
-  reversePathSegment(
-    label: 'Ordner invertiert extrahieren',
-    type: 'reversePathSegment',
-    constructor: ReversePathSegmentRule.new,
-    // fromJson: ReversePathSegmentRule.fromJson,
-    onlyFirstPosition: true,
-    eingabeBlueprints: [
-      ProtoEingabeBlueprint(
-        label: 'Position',
-        helperText: '0 = Datei, 1 = letzter Ordner, 2 = vorletzter Ordner, ...',
-        field: 'reverseIndex',
-        valueType: int,
-        defaultValue: '0',
-      ),
-    ],
-  ),
-
-  filesize(
-    label: 'Dateigröße',
-    type: 'fileSize',
-    constructor: FileSizeRule.new,
-    // fromJson: FileSizeRule.fromJson,
-    onlyFirstPosition: true,
-    eingabeBlueprints: [],
-  ),
-
-  createdAt(
-    label: 'Erstellungsdatum',
-    type: 'createdAt',
-    constructor: CreatedAtRule.new,
-    // fromJson: CreatedAtRule.fromJson,
-    onlyFirstPosition: true,
-    eingabeBlueprints: [
-      ProtoEingabeBlueprint(
-        label: 'Format',
-        helperText: 'Format des Datums (z.B. dd.MM.yyyy HH:mm:ss)',
-        field: 'format',
+        label: 'Keyword',
+        helperText: 'Keyword, das geprüft wird',
+        field: 'keyword',
         valueType: String,
-        defaultValue: 'dd.MM.yyyy HH:mm:ss',
+        defaultValue: '',
+      ),
+      ProtoEingabeBlueprint(
+        label: 'Falls ja',
+        helperText: 'Wert, wenn Keyword gefunden wird',
+        field: 'valueIfMatch',
+        valueType: String,
+        defaultValue: '',
       ),
     ],
-  ),
-
-  filepath(
-    label: 'Dateipfad',
-    type: 'filepath',
-    constructor: FilePathRule.new,
-    // fromJson: FilePathRule.fromJson,
-    onlyFirstPosition: true,
-    eingabeBlueprints: [],
   ),
 
   substring(
@@ -237,13 +254,21 @@ enum RuleType {
     ],
   ),
 
-  filetype(
-    label: 'Dateityp',
-    type: 'filetype',
-    constructor: FileTypeRule.new,
-    // fromJson: FileTypeRule.fromJson,
-    onlyFirstPosition: true,
-    eingabeBlueprints: [],
+  regEx(
+    label: 'Benutzerdefinierter Regex',
+    type: 'regEx',
+    constructor: SimpleRegexRule.new,
+    // fromJson: SimpleRegexRule.fromJson,
+    onlyFirstPosition: false,
+    eingabeBlueprints: [
+      ProtoEingabeBlueprint(
+        label: 'Regex',
+        helperText: 'Regulärer Ausdruck (z.B. \\d+ für Zahlen)',
+        field: 'regex',
+        valueType: String,
+        defaultValue: '',
+      ),
+    ],
   );
 
   const RuleType({

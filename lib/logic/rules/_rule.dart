@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 
 part 'concatenation_rule.dart';
 part 'conditional_rule.dart';
-part 'created_at_rule.dart';
+part 'conditional_replacement_rule.dart';
+part 'modified_at_rule.dart';
 part 'file_path_rule.dart';
 part 'file_size_rule.dart';
 part 'file_type_rule.dart';
@@ -48,10 +49,12 @@ sealed class Rule {
         return SimpleRegexRule.fromJson(json);
       case RuleType.filesize:
         return FileSizeRule.fromJson(json);
-      case RuleType.createdAt:
-        return CreatedAtRule.fromJson(json);
+      case RuleType.modifiedAt:
+        return ModifiedAtRule.fromJson(json);
       case RuleType.conditional:
         return ConditionalRule.fromJson(json);
+      case RuleType.conditionalReplacement:
+        return ConditionalReplacementRule.fromJson(json);
       case RuleType.filetype:
         return FileTypeRule.fromJson(json);
       case RuleType.filepath:

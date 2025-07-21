@@ -1,3 +1,4 @@
+import 'package:expath_app/core/providers.dart';
 import 'package:expath_app/gui/rule_editor_screen/state/rule_editor_state_notifier.dart';
 import 'package:expath_app/gui/rule_editor_screen/rule_editor_screen.dart';
 import 'package:expath_app/logic/models/rule_stack.dart';
@@ -9,22 +10,17 @@ class RuleStackListItem extends ConsumerWidget {
   final RuleStack ruleStack;
   final int index;
   final int totalCount;
-  final VoidCallback onMoveUp;
-  final VoidCallback onMoveDown;
-  final VoidCallback onRemove;
 
   const RuleStackListItem({
     super.key,
     required this.ruleStack,
     required this.index,
     required this.totalCount,
-    required this.onMoveUp,
-    required this.onMoveDown,
-    required this.onRemove,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final appStateNotifier = ref.watch(refAppState.notifier);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: Row(
@@ -41,11 +37,19 @@ class RuleStackListItem extends ConsumerWidget {
               children: [
                 IconButton(
                   icon: Icon(Icons.arrow_upward),
-                  onPressed: index > 0 ? onMoveUp : null,
+                  onPressed: index > 0
+                      ? () {
+                          appStateNotifier.moveRuleStack(index, index - 1);
+                        }
+                      : null,
                 ),
                 IconButton(
                   icon: Icon(Icons.arrow_downward),
-                  onPressed: index < totalCount - 1 ? onMoveDown : null,
+                  onPressed: index < totalCount - 1
+                      ? () {
+                          appStateNotifier.moveRuleStack(index, index + 1);
+                        }
+                      : null,
                 ),
                 IconButton(
                   icon: Icon(Icons.edit),
@@ -62,7 +66,7 @@ class RuleStackListItem extends ConsumerWidget {
                 ),
                 IconButton(
                   icon: Icon(Icons.delete),
-                  onPressed: () => _showRemoveConfirmation(context),
+                  onPressed: () => _showRemoveConfirmation(context, ref),
                 ),
               ],
             ),
@@ -82,7 +86,8 @@ class RuleStackListItem extends ConsumerWidget {
   }
 
   /// Show confirmation dialog before removing rule stack
-  void _showRemoveConfirmation(BuildContext context) async {
+  void _showRemoveConfirmation(BuildContext context, WidgetRef ref) async {
+    final appStateNotifier = ref.read(refAppState.notifier);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -102,7 +107,7 @@ class RuleStackListItem extends ConsumerWidget {
     );
 
     if (confirmed == true) {
-      onRemove();
+      appStateNotifier.removeRuleStack(ruleStack);
     }
   }
 }

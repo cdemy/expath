@@ -32,7 +32,7 @@ class PathSegmentRule extends Rule {
 
   static PathSegmentRule fromJson(Map<String, dynamic> json) {
     return PathSegmentRule._(
-      index: json['index'],
+      index: int.parse(json['index'].toString()),
     );
   }
 }

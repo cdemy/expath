@@ -30,7 +30,7 @@ class SubstringStartRule extends Rule {
 
   static SubstringStartRule fromJson(Map<String, dynamic> json) {
     return SubstringStartRule._(
-      chars: json['chars'] as int,
+      chars: int.parse(json['chars'].toString()),
     );
   }
 }

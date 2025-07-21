@@ -35,8 +35,8 @@ class RuleEditorState {
 
   /// Create RuleStack from current state
   RuleStack? toRuleStack() {
-    final rules = protoRules.map((protoRule) => protoRule.toRule()).toList();
     try {
+      final rules = protoRules.map((protoRule) => protoRule.toRule()).toList();
       final ruleStack = RuleStack(
         rules: rules,
         excelField: excelField.trim(),

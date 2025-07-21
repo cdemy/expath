@@ -28,7 +28,9 @@ Wenn Sie EXPATH zum ersten Mal starten, werden Sie vom Hauptbildschirm begrüßt
     - **Ordner hinzufügen:** Suchen Sie einen Ordner auf Ihrem PC aus, der im Import berücksichtigt werden soll.
 3. **Regelstapel-Liste:** Hier erstellen und verwalten Sie Ihre "Regelstapel", um zu definieren, welche Daten extrahiert werden sollen.
 4. **Regelstapel-Buttons:** Mit diesen Buttons ändern Sie die Regelstapel-Liste:
-    - **Regelstapel hinzufügen:** Hiermit erstellen Sie einen neuen Regelstapel, 
+    - **Regelstapel hinzufügen:** Hiermit erstellen Sie einen neuen Regelstapel.
+    - **Regelstapel-Satz speichern:** Hiermit speichern Sie den gegenwärtigen Satz an Regelstapeln.
+    - **Regelstapel-Satz laden:** Hiermit laden Sie einen bereits zuvor gespeicherten Satz an Regelstaplen.
 *   **Aktionsschaltflächen (Unten):** Diese Schaltflächen ermöglichen es Ihnen, die extrahierten Daten in der Vorschau anzuzeigen und in eine Excel-Datei zu exportieren.
 
 ## 3. Grundlegende Konzepte
@@ -46,10 +48,10 @@ Das ausgewählte Verzeichnis erscheint nun in der Liste.
 
 ### Regeln und Regelstapel
 
-Das Herzstück von EXPATH ist sein leistungsstarkes regelbasiertes System. Sie können mehrere Regeln zu einem "Regelstapel" kombinieren, um Dateimetadaten in einer bestimmten Reihenfolge zu extrahieren und zu transformieren.
+Das Herzstück von EXPATH ist regelbasiertes System. Sie können mehrere Regeln zu einem "Regelstapel" kombinieren, um Datei-Metadaten in einer bestimmten Reihenfolge zu extrahieren und zu transformieren.
 
 *   **Was ist eine Regel?** Eine Regel ist eine einzelne Operation, die ein Datenstück extrahiert oder modifiziert. Zum Beispiel extrahiert die "Dateiname"-Regel den Namen einer Datei, während die "Verkettung"-Regel mehrere Datenstücke zusammenfügen kann.
-*   **Was ist ein Regelstapel?** Ein Regelstapel ist eine Sequenz von Regeln, die in der Reihenfolge angewendet werden. Die Ausgabe einer Regel wird zur Eingabe für die nächste, wodurch Sie komplexe Datenextraktionslogik aufbauen können. Jeder Regelstapel entspricht einer einzelnen Spalte im finalen Excel-Export.
+*   **Was ist ein Regelstapel?** Ein Regelstapel ist eine Sequenz von Regeln, die in der Reihenfolge angewendet werden. Die Ausgabe einer Regel wird zur Eingabe für die nächste, wodurch Sie komplexe Datenextraktionslogik aufbauen können. Jeder Regelstapel entspricht einer einzelnen Spalte im finalen Excel-Export. Beispielsweise könnten Sie die ersten 3 Zeichen des Dateinamens dadurch erhalten, dass Sie als erste Regel den Dateinamen extrahieren und dann als zweite Regel "Zeichen vom Start" mit dem Argument 3 definieren.
 
 #### Erstellen und Verwalten von Regelstapeln
 
@@ -57,46 +59,36 @@ Das Herzstück von EXPATH ist sein leistungsstarkes regelbasiertes System. Sie k
 
 1.  Klicken Sie auf die Schaltfläche **"Regelstapel hinzufügen"** im Bereich **Regelliste**.
 2.  Ein neuer, leerer Regelstapel wird erstellt.
-
-**So definieren Sie die Excel-Überschrift für einen Regelstapel:**
-
-1.  Klicken Sie auf den Regelstapel in der Liste.
-2.  Geben Sie im erscheinenden Editor einen beschreibenden Namen in das Feld **"Excel-Überschrift"** ein. Dies wird der Spaltentitel in Ihrer exportierten `.xlsx`-Datei sein.
-
-**So fügen Sie eine Regel zu einem Stapel hinzu:**
-
-1.  Wählen Sie den Regelstapel aus, den Sie bearbeiten möchten.
-2.  Klicken Sie auf die Schaltfläche **"Regel hinzufügen"**.
-3.  Wählen Sie eine Regel aus der Dropdown-Liste und konfigurieren Sie ihre Parameter.
+3.  Sie kommen automatisch auf den Regelstapel-Editor-Screen.
+4.  Benennen Sie die Spalte in der Excel-Ausgabe für diesen Regelstapel.
+5.  Fügen Sie dann über die Schaltflächen Regeln zum Regelstaplel hinzu.
 
 #### Verfügbare Regeln
 
 Hier ist eine Liste der verfügbaren Regeln und was sie tun:
 
 *   **Dateiname:** Extrahiert den Namen der Datei (z.B. `dokument.txt`).
+*   **Dateiordner:** Extrahiert den Pfad zum Ordner, in dem die Datei liegt (z.B. `C:\Users\IhrName\Dokumente`)
 *   **Dateipfad:** Extrahiert den vollständigen Pfad zur Datei (z.B. `C:\Users\IhrName\Dokumente\dokument.txt`).
 *   **Dateityp:** Extrahiert die Dateierweiterung (z.B. `.txt`).
 *   **Dateigröße:** Extrahiert die Größe der Datei in Bytes.
 *   **Erstellt am:** Extrahiert das Datum und die Uhrzeit, wann die Datei erstellt wurde.
-*   **Übergeordnetes Verzeichnis:** Extrahiert den Namen des Ordners, der die Datei enthält.
-*   **Pfadsegment:** Extrahiert ein bestimmtes Segment des Dateipfads basierend auf seiner Position.
-*   **Umgekehrtes Pfadsegment:** Extrahiert ein Pfadsegment, gezählt vom Ende des Pfads.
-*   **Verkettung:** Verbindet die Ausgabe einer Unterregel mit einer benutzerdefinierten Zeichenkette.
-*   **Bedingt:** Wendet eine Unterregel nur an, wenn die Eingabe einer bestimmten Bedingung entspricht.
-*   **Klein-/Großschreibung:** Konvertiert den Eingabetext in Kleinbuchstaben oder Großbuchstaben.
-*   **Einfacher Regex:** Extrahiert Daten aus der Eingabe mit einem regulären Ausdruck.
+*   **Erstellt von:** Extrahiert den Benutzer, der die Datei erstellt hat.
+*   **Geändert am:** Extrahiert das Datum und die Uhrzeit, wann die Datei zuletzt verändert wurde.
+*   **Geändert von:** Extrahiert den Benutzer, der die Datei zuletzt verändert hat.
+*   **Pfadsegment:** Extrahiert ein bestimmtes Segment des Dateipfads basierend auf seiner Position (vom Ursprungsverzeichnis aus gezählt).
+*   **Pfadsegment (umgekehrt):** Extrahiert ein Pfadsegment, gezählt vom Ende des Pfads (dem Ordner, in dem die Datei liegt).
+*   **Kleinschreibung:** Konvertiert den Eingabetext in Kleinbuchstaben.
+*   **Großschreibung:** Konvertiert den Eingabetext in Großbuchstaben.
+*   **Verkettung:** Verbindet die Ausgabe einer Unterregel mit einer benutzerdefinierten Zeichenkette davor oder danach oder beidem.
+*   **Wenn dann sonst:** *Wenn* das Ergebnis der vorherigen Regel dem eingestellten Wert entspricht, *dann* wird ein benutzerdefinierter Wert ausgegeben, ansonsten ein anderer. Beispiel: Wenn die Datei im Ordner "Patent" liegt, dann wird "P" ausgeben, sonst "X".
+*   **Wenn dann ersetzen:** *Wenn* das Ergebnis der vorherigen Regel dem eingestellten Wert entspricht, *dann* wird ein benutzerdefinierter Wert ausgegeben, ansonsten das Ergebnis der vorherigen Regeln. Beispiel: Wenn die Datei im Ordner "Patent" liegt, dann wird "P" ausgeben, sonst der Name des vorherigen Ordners. In Kombination sind so auch komplexe Behandlungen im Sinne von Switch-Case-Anwendungen denkbar.
+*   **Zeichen (X bis Y):** Extrahiert lediglich die Zeichen X bis Y aus dem vorherigen Ergebnis. Beispiel: Von Zeichen 2 bis 4 aus "Hallo" ergibt "all".
+*   **Zeichen (vor vorne):** Extrahiert lediglich X Zeichen ab dem Beginn des vorherigen Ergebnis. Beispiel: Die ersten 3 Zeichen von "Hallo" sind "Hal".
+*   **Zeichen (von hinten):** Extrahiert lediglich X Zeichen ab dem Ende des vorherigen Ergebnis. Beispiel: Die letzten 3 Zeichen von "Hallo" sind "llo".
+*   **Benutzerdefinierter Regex:** Extrahiert Daten aus der Eingabe mit einem regulären Ausdruck.
 
 ## 4. Arbeitsablauf: Schritt-für-Schritt-Anleitung
-
-```mermaid
-graph TD
-    subgraph EXPATH Arbeitsablauf
-        A[1. Verzeichnisse hinzufügen] --> B[2. Regelstapel erstellen/laden];
-        B --> C[3. Regeln & Excel-Überschriften definieren];
-        C --> D[4. Extrahierte Daten in Vorschau anzeigen];
-        D --> E[5. Nach Excel exportieren];
-    end
-```
 
 1.  **Verzeichnisse hinzufügen:** Beginnen Sie damit, die Ordner hinzuzufügen, die die zu verarbeitenden Dateien enthalten.
 2.  **Regelstapel erstellen/laden:** Erstellen Sie neue Regelstapel oder laden Sie eine zuvor gespeicherte Konfiguration aus einer JSON-Datei.

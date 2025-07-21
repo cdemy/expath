@@ -24,7 +24,8 @@ class _RuleEingabeInputFieldState extends ConsumerState<RuleEingabeInputField> {
 
   @override
   void initState() {
-    _controller.text = widget.ruleType.eingabeBlueprints[widget.eingabeIndex].defaultValue;
+    final protoRule = ref.read(refRuleEditor).protoRules[widget.ruleIndex];
+    _controller.text = protoRule.protoEingaben[widget.eingabeIndex].eingabe;
     super.initState();
   }
 

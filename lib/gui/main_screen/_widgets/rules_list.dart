@@ -9,7 +9,6 @@ class RuleStacksList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appState = ref.watch(refAppState);
-    final appStateNotifier = ref.watch(refAppState.notifier);
     final ruleStacks = appState.ruleStacks;
     return Container(
       decoration: BoxDecoration(
@@ -40,9 +39,6 @@ class RuleStacksList extends ConsumerWidget {
                         ruleStack: ruleStack,
                         index: index,
                         totalCount: ruleStacks.length,
-                        onMoveUp: () => appStateNotifier.moveRuleStack(index, index - 1),
-                        onMoveDown: () => appStateNotifier.moveRuleStack(index, index + 1),
-                        onRemove: () => appStateNotifier.removeRuleStack(ruleStack),
                       );
                     },
                   ),

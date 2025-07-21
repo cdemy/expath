@@ -38,8 +38,8 @@ class SubstringRule extends Rule {
 
   static SubstringRule fromJson(Map<String, dynamic> json) {
     return SubstringRule._(
-      von: json['von'],
-      bis: json['bis'],
+      von: int.parse(json['von'].toString()),
+      bis: int.parse(json['bis'].toString()),
     );
   }
 }
