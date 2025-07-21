@@ -14,14 +14,21 @@ Dieses Handbuch führt Sie durch die Funktionen und den Arbeitsablauf von EXPATH
 
 ### Installation
 
-EXPATH ist eine plattformübergreifende Desktop-Anwendung, die unter Windows, macOS und Linux läuft. Um zu beginnen, laden Sie einfach die neueste Version für Ihr Betriebssystem herunter und führen Sie das Installationsprogramm aus.
+EXPATH ist eine plattformübergreifende Desktop-Anwendung auf Flutter-Basis. Es können somit lauffähige Anwendungen für Windows, macOS und Linux kompiliert werden. Zielplattform für die Anwendung ist eigentlich Windows.
 
 ### Der Hauptbildschirm
 
+![Hauptbildschirm](assets/main_screen.png)
+
 Wenn Sie EXPATH zum ersten Mal starten, werden Sie vom Hauptbildschirm begrüßt, der in drei wichtige Bereiche unterteilt ist:
 
-*   **Verzeichnisliste (Links):** Hier fügen Sie die Ordner hinzu, die die zu verarbeitenden Dateien enthalten.
-*   **Regelliste (Rechts):** Hier erstellen und verwalten Sie Ihre "Regelstapel", um zu definieren, welche Daten extrahiert werden sollen.
+1. **Verzeichnisliste:** Hier werden alle Ordner angezeigt, deren Dateien (und Dateien in Unterverzeichnissen) berücksichtigt werden sollen.
+2. **Verzeichnisliste-Buttons:** Mit diesen Buttons ändern Sie die Verzeichnisliste:
+    - **Neu:** Das gesamte Projekt wird zurückgesetzt und startet wieder neu.
+    - **Ordner hinzufügen:** Suchen Sie einen Ordner auf Ihrem PC aus, der im Import berücksichtigt werden soll.
+3. **Regelstapel-Liste:** Hier erstellen und verwalten Sie Ihre "Regelstapel", um zu definieren, welche Daten extrahiert werden sollen.
+4. **Regelstapel-Buttons:** Mit diesen Buttons ändern Sie die Regelstapel-Liste:
+    - **Regelstapel hinzufügen:** Hiermit erstellen Sie einen neuen Regelstapel, 
 *   **Aktionsschaltflächen (Unten):** Diese Schaltflächen ermöglichen es Ihnen, die extrahierten Daten in der Vorschau anzuzeigen und in eine Excel-Datei zu exportieren.
 
 ## 3. Grundlegende Konzepte
