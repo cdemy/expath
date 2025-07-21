@@ -67,14 +67,14 @@ Das Herzstück von EXPATH ist regelbasiertes System. Sie können mehrere Regeln 
 
 Hier ist eine Liste der verfügbaren Regeln und was sie tun:
 
-*   **Dateiname:** Extrahiert den Namen der Datei (z.B. `dokument.txt`).
-*   **Dateiordner:** Extrahiert den Pfad zum Ordner, in dem die Datei liegt (z.B. `C:\Users\IhrName\Dokumente`)
-*   **Dateipfad:** Extrahiert den vollständigen Pfad zur Datei (z.B. `C:\Users\IhrName\Dokumente\dokument.txt`).
-*   **Dateityp:** Extrahiert die Dateierweiterung (z.B. `.txt`).
-*   **Dateigröße:** Extrahiert die Größe der Datei in Bytes.
-*   **Geändert am:** Extrahiert das Datum und die Uhrzeit, wann die Datei zuletzt verändert wurde.
-*   **Pfadsegment:** Extrahiert ein bestimmtes Segment des Dateipfads basierend auf seiner Position (vom Ursprungsverzeichnis aus gezählt).
-*   **Pfadsegment (umgekehrt):** Extrahiert ein Pfadsegment, gezählt vom Ende des Pfads (dem Ordner, in dem die Datei liegt).
+*   **Dateiname(+):** Extrahiert den Namen der Datei (z.B. `dokument.txt`).
+*   **Dateiordner(+):** Extrahiert den Pfad zum Ordner, in dem die Datei liegt (z.B. `C:\Users\IhrName\Dokumente`)
+*   **Dateipfad(+):** Extrahiert den vollständigen Pfad zur Datei (z.B. `C:\Users\IhrName\Dokumente\dokument.txt`).
+*   **Dateityp(+):** Extrahiert die Dateierweiterung (z.B. `.txt`).
+*   **Dateigröße(+):** Extrahiert die Größe der Datei in Bytes.
+*   **Geändert am(+):** Extrahiert das Datum und die Uhrzeit, wann die Datei zuletzt verändert wurde.
+*   **Pfadsegment(+):** Extrahiert ein bestimmtes Segment des Dateipfads basierend auf seiner Position (vom Ursprungsverzeichnis aus gezählt).
+*   **Pfadsegment (umgekehrt)(+):** Extrahiert ein Pfadsegment, gezählt vom Ende des Pfads (dem Ordner, in dem die Datei liegt).
 *   **Kleinschreibung:** Konvertiert den Eingabetext in Kleinbuchstaben.
 *   **Großschreibung:** Konvertiert den Eingabetext in Großbuchstaben.
 *   **Verkettung:** Verbindet die Ausgabe einer Unterregel mit einer benutzerdefinierten Zeichenkette davor oder danach oder beidem.
@@ -84,6 +84,8 @@ Hier ist eine Liste der verfügbaren Regeln und was sie tun:
 *   **Zeichen (vor vorne):** Extrahiert lediglich X Zeichen ab dem Beginn des vorherigen Ergebnis. Beispiel: Die ersten 3 Zeichen von "Hallo" sind "Hal".
 *   **Zeichen (von hinten):** Extrahiert lediglich X Zeichen ab dem Ende des vorherigen Ergebnis. Beispiel: Die letzten 3 Zeichen von "Hallo" sind "llo".
 *   **Benutzerdefinierter Regex:** Extrahiert Daten aus der Eingabe mit einem regulären Ausdruck.
+
+*Die mit + gekennzeichneten Regeln setzen voraus, dass sie an der obersten Position eines Regelstapels stehen, weil sie sich nicht auf ein vorhergehendes Resultat beziehen können, sondern direkt die Datei als Ausgangsbasis brauchen (Beispiel: Sie können nicht den Dateinamen eines Teilergebnisses berechnen).*
 
 ## 4. Arbeitsablauf: Schritt-für-Schritt-Anleitung
 
