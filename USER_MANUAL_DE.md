@@ -72,10 +72,7 @@ Hier ist eine Liste der verfügbaren Regeln und was sie tun:
 *   **Dateipfad:** Extrahiert den vollständigen Pfad zur Datei (z.B. `C:\Users\IhrName\Dokumente\dokument.txt`).
 *   **Dateityp:** Extrahiert die Dateierweiterung (z.B. `.txt`).
 *   **Dateigröße:** Extrahiert die Größe der Datei in Bytes.
-*   **Erstellt am:** Extrahiert das Datum und die Uhrzeit, wann die Datei erstellt wurde.
-*   **Erstellt von:** Extrahiert den Benutzer, der die Datei erstellt hat.
 *   **Geändert am:** Extrahiert das Datum und die Uhrzeit, wann die Datei zuletzt verändert wurde.
-*   **Geändert von:** Extrahiert den Benutzer, der die Datei zuletzt verändert hat.
 *   **Pfadsegment:** Extrahiert ein bestimmtes Segment des Dateipfads basierend auf seiner Position (vom Ursprungsverzeichnis aus gezählt).
 *   **Pfadsegment (umgekehrt):** Extrahiert ein Pfadsegment, gezählt vom Ende des Pfads (dem Ordner, in dem die Datei liegt).
 *   **Kleinschreibung:** Konvertiert den Eingabetext in Kleinbuchstaben.
